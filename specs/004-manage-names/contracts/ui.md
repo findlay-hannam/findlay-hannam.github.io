@@ -53,4 +53,4 @@ Key `baby-names:v1`, shape as in [data-model.md](../data-model.md), unchanged.
 - `src/App.tsx` wraps the page in `<div class="app" data-category="boys|girls|home">`, from the first path segment (case-insensitive); anything that is not `/boys…` or `/girls…` is `home`.
 - `src/app.css` maps three palettes onto Pico's CSS variables: baby blue (boys), baby pink (girls), warm cream (home, not-found). Page background tinted, content in a white rounded card with a solid accent header band, pill-shaped buttons, system rounded font stack (no web fonts). Every text/background pair is at least 4.5:1.
 - Nav links are colour-coded pills by destination: Boys blue, Girls pink, Set Last Name cream (`pill pill-boys|pill-girls|pill-home`).
-- `index.html` sets `data-theme="light"` so Pico's dark mode never fights the pastel palette.
+- Dark mode follows the device setting (`prefers-color-scheme`): each section switches to a deep palette (navy, plum, warm brown) with lifted pastel accents; Pico's own controls follow because `index.html` no longer forces `data-theme="light"`. Every text/background pair is at least 4.5:1 in both modes.

@@ -32,16 +32,17 @@
   --pico-secondary-hover-border: var(--accent-hover);
   --pico-secondary-inverse: var(--accent-ink);
   --pico-secondary-underline: color-mix(in srgb, var(--outline) 40%, transparent);
-  --pico-card-background-color: #fff;
+  --pico-card-background-color: var(--surface);
   --pico-card-sectioning-background-color: var(--accent);
   --pico-card-box-shadow: 0 0.75rem 1.75rem -1rem color-mix(in srgb, var(--heading) 45%, transparent);
-  --pico-form-element-background-color: #fff;
+  --pico-form-element-background-color: var(--surface);
   --pico-form-element-border-color: var(--accent);
   --pico-form-element-active-border-color: var(--outline);
   --pico-form-element-focus-color: var(--outline);
 }
 
 .app[data-category='boys'] {
+  --surface: #fff;
   --page: #e6f3fd;
   --ink: #243b53;
   --heading: #1d4e89;
@@ -53,6 +54,7 @@
 }
 
 .app[data-category='girls'] {
+  --surface: #fff;
   --page: #fdecf2;
   --ink: #4a2a3a;
   --heading: #8f2c5a;
@@ -64,6 +66,7 @@
 }
 
 .app[data-category='home'] {
+  --surface: #fff;
   --page: #fff4e4;
   --ink: #4a3524;
   --heading: #8a4b14;
@@ -179,7 +182,7 @@ header nav button.pill:focus-visible {
   min-height: 2.75rem;
   padding: 0.5rem 1rem;
   border-radius: 1rem;
-  background-color: color-mix(in srgb, var(--accent) 30%, #fff);
+  background-color: color-mix(in srgb, var(--accent) 30%, var(--surface));
 }
 
 .app .name-link {
@@ -218,6 +221,7 @@ header nav button.pill:focus-visible {
   border-radius: 999px;
   font-size: 1.25rem;
   line-height: 1;
+  color: var(--ink);
   list-style: none;
   cursor: pointer;
 }
@@ -227,9 +231,11 @@ header nav button.pill:focus-visible {
   display: none;
 }
 
-.app .row-menu > summary:hover,
-.app .row-menu[open] > summary {
+/* `details.row-menu` matches the weight of Pico's own open-summary colour rule so this one wins. */
+.app details.row-menu > summary:hover,
+.app details.row-menu[open] > summary {
   background-color: var(--accent);
+  color: var(--accent-ink);
 }
 
 .row-menu-items {
@@ -243,7 +249,7 @@ header nav button.pill:focus-visible {
   min-width: 13rem;
   padding: 0.5rem;
   border-radius: 1rem;
-  background-color: #fff;
+  background-color: var(--surface);
   box-shadow: var(--pico-card-box-shadow);
 }
 
@@ -336,7 +342,7 @@ header nav button.pill {
   margin-bottom: 0.5rem;
   padding: 0.6rem 1rem;
   border-radius: 1rem;
-  background-color: color-mix(in srgb, var(--accent) 30%, #fff);
+  background-color: color-mix(in srgb, var(--accent) 30%, var(--surface));
 }
 
 .combo-list strong {
@@ -360,4 +366,69 @@ header nav a.pill[aria-current] {
 .app .dialog-actions > button {
   width: auto;
   margin: 0;
+}
+
+/*
+ * Dark mode: follows the device setting. Same three sections, deep backgrounds with the
+ * pastel accents lifted so every text/background pair stays at least 4.5:1.
+ */
+@media (prefers-color-scheme: dark) {
+  .app[data-category='boys'] {
+    --page: #0f1c2b;
+    --surface: #17293d;
+    --ink: #dbe9f6;
+    --heading: #9fd0f5;
+    --link: #8cc4f0;
+    --outline: #7fb7e6;
+    --accent: #3a6f9a;
+    --accent-hover: #4880ad;
+    --accent-ink: #f1f7fd;
+  }
+
+  .app[data-category='girls'] {
+    --page: #22101a;
+    --surface: #341a28;
+    --ink: #f6dce8;
+    --heading: #f5a9c8;
+    --link: #f2a0c2;
+    --outline: #e98bb3;
+    --accent: #8a3c63;
+    --accent-hover: #9c4a73;
+    --accent-ink: #fff0f6;
+  }
+
+  .app[data-category='home'] {
+    --page: #1f160d;
+    --surface: #30231a;
+    --ink: #f3e4d0;
+    --heading: #f6c58a;
+    --link: #f0b878;
+    --outline: #e5a865;
+    --accent: #87562a;
+    --accent-hover: #986537;
+    --accent-ink: #fff4e6;
+  }
+
+  .pill-boys {
+    --pill: #3a6f9a;
+    --pill-hover: #4880ad;
+    --pill-ink: #f1f7fd;
+  }
+
+  .pill-girls {
+    --pill: #8a3c63;
+    --pill-hover: #9c4a73;
+    --pill-ink: #fff0f6;
+  }
+
+  .pill-home {
+    --pill: #87562a;
+    --pill-hover: #986537;
+    --pill-ink: #fff4e6;
+  }
+
+  /* Softer shadows read as glows on dark backgrounds; keep them subtle. */
+  .app {
+    --pico-card-box-shadow: 0 0.75rem 1.75rem -1rem rgb(0 0 0 / 60%);
+  }
 }
