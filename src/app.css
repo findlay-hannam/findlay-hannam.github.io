@@ -152,3 +152,24 @@ header nav a.pill:focus-visible {
   padding: 0.125rem 0.625rem;
   font-size: 0.75rem;
 }
+
+/* Add-name form: input, role dropdown and button on one compact row. */
+.add-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.app .add-row > * {
+  width: auto;
+  margin: 0;
+}
+
+.app .add-row input {
+  flex: 1 1 10rem;
+}
+
+.app .add-row select {
+  flex: 0 1 15rem;
+}

@@ -34,8 +34,9 @@ All are `<button type="button">`. If a delete or move cannot be persisted, `wind
 
 ## Add-name form
 
-- Radios: "First and middle name" **checked** on first display and again after each successful add; "Middle name only" unchecked.
-- Rejected add: typed name and radio choice unchanged; error in `role="alert"`.
+- One compact row (`div.add-row`): name text input (`aria-label="Name"`, placeholder "Name"), role dropdown (`<select aria-label="Use as">`), then the **Add name** button. On narrow screens the row wraps.
+- Dropdown options: "First and middle name" (`both`, **selected** on first display and again after each successful add) and "Middle name only" (`middle`). No radios or fieldset.
+- Rejected add: typed name and dropdown choice unchanged; error in `role="alert"` below the row.
 - Removed message: "Choose how to use this name." (no longer reachable).
 
 ## Fresh visitor

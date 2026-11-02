@@ -22,24 +22,22 @@ export default function AddNameForm({ category }: { category: CategoryId }) {
 
   return (
     <form onSubmit={onSubmit}>
-      <label>
-        Name
-        <input value={value} onChange={(e) => setValue(e.target.value)} aria-invalid={error ? true : undefined} />
-      </label>
-      <fieldset>
-        <legend>Use as</legend>
-        <label>
-          <input type="radio" name="role" checked={role === 'both'} onChange={() => setRole('both')} />
-          First and middle name
-        </label>
-        <label>
-          <input type="radio" name="role" checked={role === 'middle'} onChange={() => setRole('middle')} />
-          Middle name only
-        </label>
-      </fieldset>
+      <div className="add-row">
+        <input
+          aria-label="Name"
+          placeholder="Name"
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          aria-invalid={error ? true : undefined}
+        />
+        <select aria-label="Use as" value={role} onChange={(e) => setRole(e.target.value === 'middle' ? 'middle' : 'both')}>
+          <option value="both">First and middle name</option>
+          <option value="middle">Middle name only</option>
+        </select>
+        <button type="submit">Add name</button>
+      </div>
       {error && <small role="alert">{error}</small>}
       {notice && <small role="status">{notice}</small>}
-      <button type="submit">Add name</button>
     </form>
   )
 }

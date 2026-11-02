@@ -49,20 +49,29 @@ describe('/boys and /girls', () => {
   })
 
   describe('with a surname set', () => {
-    it('shows the add-name form with "First and middle name" selected by default (FR-009)', () => {
-      const html = renderAt('/boys')
-      expect(html).toContain('<label')
-      expect(html).toContain('Name')
-      expect(html).toContain('<fieldset')
-      expect(html).toContain('<legend>Use as</legend>')
-      expect(html).toContain('First and middle name')
-      expect(html).toContain('Middle name only')
-      expect(html).toContain('type="radio"')
-      const radios = html.match(/<input[^>]*type="radio"[^>]*>/g) ?? []
-      expect(radios).toHaveLength(2)
-      expect(radios[0]).toMatch(/checked/)
-      expect(radios[1]).not.toMatch(/checked/)
-      expect(html).toContain('Add name')
+    it('shows a compact one-row add form with a role dropdown, "First and middle name" selected by default (FR-009)', () => {
+      const html = mainHtml(renderAt('/boys'))
+      // one row: name input, role dropdown, button, in that order
+      const row = html.match(/<div class="add-row">([\s\S]*?)<\/div>/)?.[1] ?? ''
+      expect(row.indexOf('<input')).toBeGreaterThanOrEqual(0)
+      expect(row.indexOf('<input')).toBeLessThan(row.indexOf('<select'))
+      expect(row.indexOf('<select')).toBeLessThan(row.indexOf('<button'))
+      expect(row).toContain('>Add name</button>')
+      // labelled controls without taking vertical space
+      expect(row).toMatch(/<input[^>]*aria-label="Name"/)
+      expect(row).toMatch(/<select[^>]*aria-label="Use as"/)
+      // radios are gone
+      expect(html).not.toContain('type="radio"')
+      expect(html).not.toContain('<fieldset')
+      // the dropdown offers both roles, first-and-middle selected
+      const options = row.match(/<option[^>]*>[^<]*<\/option>/g) ?? []
+      expect(options).toHaveLength(2)
+      expect(options[0]).toContain('value="both"')
+      expect(options[0]).toContain('First and middle name')
+      expect(options[0]).toMatch(/selected/)
+      expect(options[1]).toContain('value="middle"')
+      expect(options[1]).toContain('Middle name only')
+      expect(options[1]).not.toMatch(/selected/)
     })
 
     it('links added first-and-middle names and shows middle-only names without a link', () => {

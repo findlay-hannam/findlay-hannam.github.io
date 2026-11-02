@@ -147,3 +147,4 @@ A new visitor sees empty lists, not sample names such as Oliver, Arthur or Finn 
 - Combinations on a name page list the middle names in the same alphabetical order, so every list on the site has one predictable order.
 - No bulk delete, no rename, no undo.
 - Visual styling reuses the existing Pico layout.
+- After 004, the role choice is a dropdown on the same row as the name input and the Add name button, not radio buttons. Where this spec says a "radio" is selected, read it as that dropdown option being selected.
