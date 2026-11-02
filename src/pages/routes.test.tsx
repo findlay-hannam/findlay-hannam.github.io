@@ -41,6 +41,30 @@ describe('routes', () => {
     })
   })
 
+  describe('section theme and nav pills', () => {
+    it.each([
+      ['/boys', 'boys'],
+      ['/Boys/', 'boys'],
+      ['/boys/oliver', 'boys'],
+      ['/boys/nope', 'boys'],
+      ['/girls', 'girls'],
+      ['/girls/ada', 'girls'],
+      ['/', 'home'],
+      ['/nope', 'home'],
+      ['/nope/x', 'home'],
+    ])('%s is themed %s', (path, theme) => {
+      expect(renderAt(path)).toContain(`data-category="${theme}"`)
+    })
+
+    it('colour-codes the nav links by destination', () => {
+      const tags = navHtml(renderAt('/')).match(/<a\b[^>]*>/g) ?? []
+      expect(tags).toHaveLength(3)
+      expect(tags[0]).toContain('pill-boys')
+      expect(tags[1]).toContain('pill-girls')
+      expect(tags[2]).toContain('pill-home')
+    })
+  })
+
   describe('last name wording on / (FR-011)', () => {
     it('prompts for a last name when unset', () => {
       resetStore()

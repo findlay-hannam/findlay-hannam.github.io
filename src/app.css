@@ -1,3 +1,143 @@
+/*
+ * Warm, friendly look on top of Pico: soft pastel pages per section (blue for boys,
+ * pink for girls, cream elsewhere), rounded shapes, pill buttons. Colours are Pico
+ * variables, so Pico's components pick them up. Text/background pairs are AA contrast.
+ */
+
+.app {
+  min-height: 100vh;
+  background-color: var(--page);
+  font-family: ui-rounded, 'SF Pro Rounded', 'Hiragino Maru Gothic ProN', Nunito, Quicksand, system-ui, sans-serif;
+
+  --pico-border-radius: 1rem;
+  --pico-color: var(--ink);
+  --pico-h1-color: var(--heading);
+  --pico-h2-color: var(--heading);
+  --pico-h3-color: var(--heading);
+  --pico-h4-color: var(--heading);
+  --pico-primary: var(--link);
+  --pico-primary-hover: var(--heading);
+  --pico-primary-underline: color-mix(in srgb, var(--link) 40%, transparent);
+  --pico-primary-background: var(--accent);
+  --pico-primary-border: var(--accent);
+  --pico-primary-hover-background: var(--accent-hover);
+  --pico-primary-hover-border: var(--accent-hover);
+  --pico-primary-inverse: var(--accent-ink);
+  --pico-primary-focus: color-mix(in srgb, var(--accent) 50%, transparent);
+  --pico-secondary: var(--outline);
+  --pico-secondary-hover: var(--heading);
+  --pico-secondary-background: var(--accent);
+  --pico-secondary-border: var(--accent);
+  --pico-secondary-hover-background: var(--accent-hover);
+  --pico-secondary-hover-border: var(--accent-hover);
+  --pico-secondary-inverse: var(--accent-ink);
+  --pico-secondary-underline: color-mix(in srgb, var(--outline) 40%, transparent);
+  --pico-card-background-color: #fff;
+  --pico-card-sectioning-background-color: var(--accent);
+  --pico-card-box-shadow: 0 0.75rem 1.75rem -1rem color-mix(in srgb, var(--heading) 45%, transparent);
+  --pico-form-element-background-color: #fff;
+  --pico-form-element-border-color: var(--accent);
+  --pico-form-element-active-border-color: var(--outline);
+  --pico-form-element-focus-color: var(--outline);
+}
+
+.app[data-category='boys'] {
+  --page: #e6f3fd;
+  --ink: #243b53;
+  --heading: #1d4e89;
+  --link: #1a62a0;
+  --outline: #2b73ad;
+  --accent: #a9d6f5;
+  --accent-hover: #8cc7ee;
+  --accent-ink: #16324f;
+}
+
+.app[data-category='girls'] {
+  --page: #fdecf2;
+  --ink: #4a2a3a;
+  --heading: #8f2c5a;
+  --link: #a3306a;
+  --outline: #b13c72;
+  --accent: #f8c1d6;
+  --accent-hover: #f3a9c6;
+  --accent-ink: #4a1530;
+}
+
+.app[data-category='home'] {
+  --page: #fff4e4;
+  --ink: #4a3524;
+  --heading: #8a4b14;
+  --link: #99480f;
+  --outline: #a85a1c;
+  --accent: #ffd8a6;
+  --accent-hover: #ffc984;
+  --accent-ink: #4a2a0a;
+}
+
+/* Rounded, softer shapes. */
+.app button {
+  border-radius: 999px;
+  font-weight: 600;
+}
+
+.app article {
+  border-radius: 1.5rem;
+  overflow: hidden;
+}
+
+/* A solid accent band as the card header. */
+.app article > header {
+  --pico-h2-color: var(--accent-ink);
+}
+
+.app article > header h2 {
+  margin-bottom: 0;
+}
+
+/* Navigation: centred row of colour-coded pills, one colour per destination. */
+header nav {
+  justify-content: center;
+}
+
+/* Pico offsets the first and last <ul> with negative margins; clear them. */
+header nav ul:first-of-type {
+  margin-inline: 0;
+}
+
+header nav a.pill {
+  margin: 0;
+  padding: 0.45rem 1.1rem;
+  border-radius: 999px;
+  background-color: var(--pill);
+  color: var(--pill-ink);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+header nav a.pill:hover,
+header nav a.pill:focus-visible {
+  background-color: var(--pill-hover);
+  color: var(--pill-ink);
+}
+
+.pill-boys {
+  --pill: #a9d6f5;
+  --pill-hover: #8cc7ee;
+  --pill-ink: #16324f;
+}
+
+.pill-girls {
+  --pill: #f8c1d6;
+  --pill-hover: #f3a9c6;
+  --pill-ink: #4a1530;
+}
+
+.pill-home {
+  --pill: #ffd8a6;
+  --pill-hover: #ffc984;
+  --pill-ink: #4a2a0a;
+}
+
 /* Name rows: the name (or link) first, then small secondary buttons beside it. */
 .name-row {
   display: flex;
@@ -9,15 +149,6 @@
 .name-row button {
   width: auto;
   margin: 0;
-  padding: 0.125rem 0.5rem;
+  padding: 0.125rem 0.625rem;
   font-size: 0.75rem;
-}
-
-/* Centre the main navigation. Pico offsets the first and last <ul> with negative margins; clear them. */
-header nav {
-  justify-content: center;
-}
-
-header nav ul:first-of-type {
-  margin-inline: 0;
 }

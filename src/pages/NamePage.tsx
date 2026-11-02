@@ -38,7 +38,9 @@ export default function NamePage({ category, slug, names }: Props) {
           ))}
         </ul>
       )}
-      <DeleteButton category={category} name={found.name} onDeleted={() => navigate(`/${category}`)} />
+      <div className="name-row">
+        <DeleteButton category={category} name={found.name} onDeleted={() => navigate(`/${category}`)} />
+      </div>
     </article>
   )
 }
