@@ -1,11 +1,11 @@
 <!--
 Sync Impact Report
-- Version change: (template) → 1.0.0
-- Modified principles: none renamed; all five principles newly defined
-- Added sections: Core Principles (I–V), Technical Constraints, Development Workflow, Governance
+- Version change: 1.1.0 → 1.1.1 (PATCH: npm → pnpm wording; earlier 1.0.0 → 1.1.0 added TDD)
+- Modified principles: III. Unit-Tested Logic → III. Test-First (TDD) (NON-NEGOTIABLE)
+- Added sections: none (TDD red-green-refactor requirement added to Principle III)
 - Removed sections: none
 - Templates: plan-template.md ✅ no change (Constitution Check reads this file at plan time)
-             spec-template.md ✅ no change; tasks-template.md ✅ no change
+             spec-template.md ✅ no change; tasks-template.md ✅ updated (tests REQUIRED, not optional)
 - Deferred TODOs: none
 -->
 # Findlay Hannam Site Constitution
@@ -25,21 +25,27 @@ Rationale: a hobby app lives or dies by how cheap it is to understand after a si
 ### II. React + TypeScript, Strictly Typed
 UI is React; all source is TypeScript with `strict` enabled.
 - `any` and `@ts-ignore` are forbidden without a one-line justifying comment.
-- `npm run build` (includes `tsc -b`) and `npm run lint` MUST pass before merge.
+- `pnpm build` (includes `tsc -b`) and `pnpm lint` MUST pass before merge.
 - Plain function components and hooks; no state library until local state demonstrably fails.
 
-### III. Unit-Tested Logic
-Logic MUST have unit test coverage; tests ship in the same change as the code.
-- Non-trivial logic (branching, parsing, state transitions) MUST have tests.
-- Pure logic SHOULD be extracted from components so it is testable without rendering.
+### III. Test-First (TDD) (NON-NEGOTIABLE)
+Logic MUST be developed test-first using red-green-refactor.
+1. Red: write a unit test for the next behaviour and see it fail for the right reason.
+2. Green: write the minimum code to pass.
+3. Refactor: clean up with tests green.
+- No production logic is written without a failing test that demands it.
 - Bug fixes MUST start with a failing regression test.
+- Pure logic SHOULD be extracted from components so it is testable without rendering.
 - Coverage MUST NOT drop below 80% lines on `src/` logic; purely presentational markup is exempt.
 - Tests MUST run in under 30 seconds locally and never touch the network.
+- `pnpm test` gates both `git push` (pre-push hook) and deploy (CI).
+
+Rationale: tests written first prove they can fail and keep the code minimal (Principle I).
 
 ### IV. Speedy Deploys
 Merge to `main` MUST deploy automatically with no manual steps.
 - CI runs install, lint, test, build, deploy; total budget under 3 minutes.
-- Dependencies MUST be cached in CI (`setup-node` npm cache).
+- Dependencies MUST be cached in CI (`setup-node` pnpm cache).
 - Deploys are static artefacts only; rollback is `git revert` and push.
 
 ### V. Zero Runtime Cost
@@ -51,8 +57,8 @@ The running app MUST cost nothing to operate.
 
 ## Technical Constraints
 
-- Stack: Vite, React 19, TypeScript, oxlint; unit tests via Vitest (to be added with first
-  testable logic).
+- Stack: Vite, React 19, TypeScript, oxlint, Vitest; package manager is pnpm (pinned via
+  `packageManager` in `package.json`). npm and yarn MUST NOT be used.
 - Hosting: GitHub Pages via `.github/workflows/deploy.yml`.
 - Accessibility basics (semantic HTML, keyboard operable, labelled controls) are required.
 - Bundle: keep initial JS lean; any single dependency adding more than 50 kB gzipped needs
@@ -77,4 +83,4 @@ commit that updates the Sync Impact Report, version, and Last Amended date.
   Principles I–V.
 - Single maintainer: amendments need no approval beyond the owner's commit.
 
-**Version**: 1.0.0 | **Ratified**: 2026-11-02 | **Last Amended**: 2026-11-02
+**Version**: 1.1.1 | **Ratified**: 2026-11-02 | **Last Amended**: 2026-11-02
