@@ -20,8 +20,8 @@ description: "Task list for Name Routing"
 
 ## Phase 1: Setup
 
-- [ ] T001 Add the `wouter` dependency with `pnpm add wouter` (package.json, pnpm-lock.yaml)
-- [ ] T002 Update package.json scripts: `test` → `vitest run --coverage --passWithNoTests`; `build` → also copy `dist/index.html` to `dist/404.html` (deep links on GitHub Pages). Add `@vitest/coverage-v8` and a Vitest config enforcing 80% lines on `src/lib` and `src/pages` (package.json, vitest.config.ts)
+- [X] T001 Add the `wouter` dependency with `pnpm add wouter` (package.json, pnpm-lock.yaml)
+- [X] T002 Update package.json scripts: `test` → `vitest run --coverage --passWithNoTests`; `build` → also copy `dist/index.html` to `dist/404.html` (deep links on GitHub Pages). Add `@vitest/coverage-v8` and a Vitest config enforcing 80% lines on `src/lib` and `src/pages` (package.json, vitest.config.ts)
 
 ---
 
@@ -29,11 +29,11 @@ description: "Task list for Name Routing"
 
 **⚠️ CRITICAL**: no user story work starts until this phase is done.
 
-- [ ] T003 [P] Write failing tests for `slugify` (lowercase, accents stripped, apostrophes dropped, spaces to `-`, trimmed dashes) in src/lib/slug.test.ts
-- [ ] T004 Implement `slugify` in src/lib/slug.ts to pass T003
-- [ ] T005 Define types `CategoryId`, `CategoryConfig`, `Config` and add sample data (surname, 2+ boys, 2+ girls, 2+ middle names per category) in src/data/config.ts
-- [ ] T006 Write config invariants test (slugs unique per category, no empty strings, every slug non-empty, surname non-empty) against the real config in src/data/config.test.ts; make it pass (FR-010)
-- [ ] T007 Add `src/test/renderAt.tsx` (renders `<App/>` at a path via wouter `<Router ssrPath>` + `renderToString`) and an App shell with Pico layout, `<Router>` and an empty `<Switch>` in src/App.tsx
+- [X] T003 [P] Write failing tests for `slugify` (lowercase, accents stripped, apostrophes dropped, spaces to `-`, trimmed dashes) in src/lib/slug.test.ts
+- [X] T004 Implement `slugify` in src/lib/slug.ts to pass T003
+- [X] T005 Define types `CategoryId`, `CategoryConfig`, `Config` and add sample data (surname, 2+ boys, 2+ girls, 2+ middle names per category) in src/data/config.ts
+- [X] T006 Write config invariants test (slugs unique per category, no empty strings, every slug non-empty, surname non-empty) against the real config in src/data/config.test.ts; make it pass (FR-010)
+- [X] T007 Add `src/test/renderAt.tsx` (renders `<App/>` at a path via wouter `<Router ssrPath>` + `renderToString`) and an App shell with Pico layout, `<Router>` and an empty `<Switch>` in src/App.tsx
 
 **Checkpoint**: slugs, config and the render harness are ready.
 
@@ -47,14 +47,14 @@ description: "Task list for Name Routing"
 
 ### Tests (write first, must FAIL) ⚠️
 
-- [ ] T008 [P] [US1] Failing tests for `firstNames(category)` returning `{ name, slug }[]` for the right category only in src/lib/names.test.ts
-- [ ] T009 [P] [US1] Failing route tests for `/boys` and `/girls`: only own names, links `href="/<category>/<slug>"`, empty-state message when list is empty, names rendered as `<a href>` links inside a list, in src/pages/CategoryList.test.tsx
+- [X] T008 [P] [US1] Failing tests for `firstNames(category)` returning `{ name, slug }[]` for the right category only in src/lib/names.test.ts
+- [X] T009 [P] [US1] Failing route tests for `/boys` and `/girls`: only own names, links `href="/<category>/<slug>"`, empty-state message when list is empty, names rendered as `<a href>` links inside a list, in src/pages/CategoryList.test.tsx
 
 ### Implementation
 
-- [ ] T010 [US1] Implement `firstNames` in src/lib/names.ts to pass T008
-- [ ] T011 [US1] Implement the CategoryList page (uses `firstNames`, semantic `<ul>`/`<a href>`, empty state) in src/pages/CategoryList.tsx
-- [ ] T012 [US1] Register `/boys` and `/girls` routes in src/App.tsx to pass T009
+- [X] T010 [US1] Implement `firstNames` in src/lib/names.ts to pass T008
+- [X] T011 [US1] Implement the CategoryList page (uses `firstNames`, semantic `<ul>`/`<a href>`, empty state) in src/pages/CategoryList.tsx
+- [X] T012 [US1] Register `/boys` and `/girls` routes in src/App.tsx to pass T009
 
 **Checkpoint**: US1 works alone and is demoable.
 
@@ -68,14 +68,14 @@ description: "Task list for Name Routing"
 
 ### Tests (write first, must FAIL) ⚠️
 
-- [ ] T013 [P] [US2] Failing tests for `findName(category, slug)` (found, unknown slug, slug from the other category) and `combinations(category, first)` (one per middle name, `full` formatted, empty when no middles) in src/lib/names.test.ts
-- [ ] T014 [P] [US2] Failing route tests for `/boys/<slug>` and `/girls/<slug>`: only that name's combinations, other names absent, unknown slug shows "name not found" with a link to the category list, empty-state when no middles; plus one test that loops over EVERY first name in the real config and asserts `/<category>/<slug>` renders its combinations (SC-001), in src/pages/NamePage.test.tsx
+- [X] T013 [P] [US2] Failing tests for `findName(category, slug)` (found, unknown slug, slug from the other category) and `combinations(category, first)` (one per middle name, `full` formatted, empty when no middles) in src/lib/names.test.ts
+- [X] T014 [P] [US2] Failing route tests for `/boys/<slug>` and `/girls/<slug>`: only that name's combinations, other names absent, unknown slug shows "name not found" with a link to the category list, empty-state when no middles; plus one test that loops over EVERY first name in the real config and asserts `/<category>/<slug>` renders its combinations (SC-001), in src/pages/NamePage.test.tsx
 
 ### Implementation
 
-- [ ] T015 [US2] Implement `findName` and `combinations` in src/lib/names.ts to pass T013 (same file as T010, so after it)
-- [ ] T016 [US2] Implement the NamePage page (heading with the first name, combinations in a semantic list, not-found state, back link) in src/pages/NamePage.tsx
-- [ ] T017 [US2] Register `/boys/:slug` and `/girls/:slug` routes in src/App.tsx to pass T014
+- [X] T015 [US2] Implement `findName` and `combinations` in src/lib/names.ts to pass T013 (same file as T010, so after it)
+- [X] T016 [US2] Implement the NamePage page (heading with the first name, combinations in a semantic list, not-found state, back link) in src/pages/NamePage.tsx
+- [X] T017 [US2] Register `/boys/:slug` and `/girls/:slug` routes in src/App.tsx to pass T014
 
 **Checkpoint**: US1 and US2 both work independently.
 
@@ -89,14 +89,14 @@ description: "Task list for Name Routing"
 
 ### Tests (write first, must FAIL) ⚠️
 
-- [ ] T018 [P] [US3] Failing route tests in src/pages/routes.test.tsx: `/` links to Boys and Girls; unknown path and unknown category show NotFound with a link to `/`; `/Boys`, `/boys/` and `/boys/<SLUG-IN-CAPS>` render the same HTML as their lowercase canonical paths (research R6)
+- [X] T018 [P] [US3] Failing route tests in src/pages/routes.test.tsx: `/` links to Boys and Girls; unknown path and unknown category show NotFound with a link to `/`; `/Boys`, `/boys/` and `/boys/<SLUG-IN-CAPS>` render the same HTML as their lowercase canonical paths (research R6)
 
 ### Implementation
 
-- [ ] T019 [P] [US3] Implement Home in src/pages/Home.tsx
-- [ ] T020 [P] [US3] Implement NotFound in src/pages/NotFound.tsx
-- [ ] T021 [US3] Add `/` and catch-all routes and a lowercase path-normalisation step in src/App.tsx (wouter matching is case-sensitive by default; verify with T018 and drop the step only if T018 passes without it) to pass T018
-- [ ] T022 [US3] Verify T002: run `pnpm build && cmp dist/index.html dist/404.html` (must exit 0)
+- [X] T019 [P] [US3] Implement Home in src/pages/Home.tsx
+- [X] T020 [P] [US3] Implement NotFound in src/pages/NotFound.tsx
+- [X] T021 [US3] Add `/` and catch-all routes and a lowercase path-normalisation step in src/App.tsx (wouter matching is case-sensitive by default; verify with T018 and drop the step only if T018 passes without it) to pass T018
+- [X] T022 [US3] Verify T002: run `pnpm build && cmp dist/index.html dist/404.html` (must exit 0)
 
 **Checkpoint**: all three stories complete.
 
@@ -104,7 +104,7 @@ description: "Task list for Name Routing"
 
 ## Phase 6: Polish
 
-- [ ] T023 [P] Run `pnpm lint`, `pnpm test` (coverage >= 80%) and `pnpm build`; fix findings
+- [X] T023 [P] Run `pnpm lint`, `pnpm test` (coverage >= 80%) and `pnpm build`; fix findings
 - [ ] T024 Run the manual steps in specs/001-name-routing/quickstart.md with `pnpm build && pnpm preview` (back/forward, refresh, deep links). Covers FR-007 (back/forward), SC-002 (≤3 selections) and SC-004 (<1 s): manual by design, as wouter owns history
 - [ ] T025 After merge and deploy, repeat quickstart steps 2, 3 and 5 on the live site
 

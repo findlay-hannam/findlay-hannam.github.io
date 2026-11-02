@@ -1,3 +1,10 @@
+import { Route, Switch } from 'wouter'
+import { isCategory } from './lib/names'
+import CategoryList from './pages/CategoryList'
+import Home from './pages/Home'
+import NamePage from './pages/NamePage'
+import NotFound from './pages/NotFound'
+
 function App() {
   return (
     <>
@@ -8,10 +15,22 @@ function App() {
         </hgroup>
       </header>
       <main className="container">
-        <article>
-          <header>Names</header>
-          <p>No names yet.</p>
-        </article>
+        <Switch>
+          <Route path="/" component={Home} />
+          <Route path="/:category/:slug">
+            {({ category, slug }) => {
+              const c = category.toLowerCase()
+              return isCategory(c) ? <NamePage category={c} slug={slug.toLowerCase()} /> : <NotFound />
+            }}
+          </Route>
+          <Route path="/:category">
+            {({ category }) => {
+              const c = category.toLowerCase()
+              return isCategory(c) ? <CategoryList category={c} /> : <NotFound />
+            }}
+          </Route>
+          <Route component={NotFound} />
+        </Switch>
       </main>
     </>
   )
