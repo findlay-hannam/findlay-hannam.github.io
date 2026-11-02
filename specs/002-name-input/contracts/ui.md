@@ -4,6 +4,8 @@
 
 > Amended by 004-manage-names: names can now be deleted and promoted/demoted between roles; "First and middle name" is preselected; the built-in config, `merge` and `Names` are gone (the visitor's `Stored` lists are the only data).
 
+> Amended by 005-last-name-modal: the last-name prompt on `/` is replaced by a modal opened from the header; `/` is now a static homepage. The in-page prompts on category and name pages stay.
+
 Routes are unchanged from [001](../../001-name-routing/contracts/routes.md). This adds forms and stored data.
 
 ## Per-route content

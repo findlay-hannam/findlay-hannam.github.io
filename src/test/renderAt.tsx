@@ -27,7 +27,15 @@ export const navCount = (html: string) => (html.match(/<nav\b/g) ?? []).length
 
 export const navHtml = (html: string) => html.match(/<nav\b[^>]*>[\s\S]*?<\/nav>/)?.[0] ?? ''
 
-export const navLinks = (html: string) =>
-  [...navHtml(html).matchAll(/<a\b[^>]*href="([^"]*)"[^>]*>([\s\S]*?)<\/a>/g)].map((m) => ({ href: m[1], text: m[2] }))
+/** Every link and button in the first <nav>, in document order. `href` only for anchors. */
+export const navItems = (html: string) =>
+  [...navHtml(html).matchAll(/<(a|button)\b([^>]*)>([\s\S]*?)<\/\1>/g)].map((m) => {
+    const href = m[2].match(/href="([^"]*)"/)?.[1]
+    return {
+      tag: m[1] as 'a' | 'button',
+      ...(href === undefined ? {} : { href }),
+      text: m[3].replace(/<[^>]*>/g, '').trim(),
+    }
+  })
 
 export const mainHtml = (html: string) => html.match(/<main\b[^>]*>([\s\S]*)<\/main>/)?.[1] ?? ''

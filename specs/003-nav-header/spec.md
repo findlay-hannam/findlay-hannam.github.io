@@ -6,6 +6,8 @@
 
 **Status**: Draft
 
+> Amended by 005-last-name-modal: "Set Last Name" now opens a modal (it is a button; Boys and Girls stay links) instead of linking to `/`, which is now a static homepage.
+
 **Input**: User description: "I want to simplify navigation. Create a nav header for all pages. Three options: Boys, Girls, Set Last Name. Get rid of the other navigation elements below the page content on other pages"
 
 **Constitution fit**: Serves *list* (one-step access to the boys and girls lists) and *combine* (one-step access to setting the last name that combinations use). No accounts or backend.

@@ -1,6 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
-import { emptyStored } from '../lib/rules'
-import { fixture, mainHtml, navCount, navHtml, navLinks, renderAt, resetStore, seed } from '../test/renderAt'
+import { fixture, mainHtml, navCount, navHtml, navItems, renderAt, resetStore, seed } from '../test/renderAt'
 
 describe('routes', () => {
   beforeEach(() => seed(fixture))
@@ -13,20 +12,24 @@ describe('routes', () => {
       const html = renderAt(path)
       expect(navCount(html)).toBe(1)
       expect(navHtml(html)).toContain('aria-label="Main"')
-      expect(navLinks(html)).toEqual([
-        { href: '/boys', text: 'Boys' },
-        { href: '/girls', text: 'Girls' },
-        { href: '/', text: 'Set Last Name' },
+      expect(navItems(html)).toEqual([
+        { tag: 'a', href: '/boys', text: 'Boys' },
+        { tag: 'a', href: '/girls', text: 'Girls' },
+        { tag: 'button', text: 'Set Last Name' },
       ])
+      expect(navHtml(html)).toContain('<button type="button"')
+      expect(navHtml(html)).toContain('aria-haspopup="dialog"')
       expect(html.indexOf('<nav')).toBeLessThan(html.indexOf('<main'))
+      expect(html).not.toContain('<dialog')
     })
 
     it('has no site title or tagline above the nav (more room for content)', () => {
       const html = renderAt('/')
-      expect(html).not.toContain('<h1')
-      expect(html).not.toContain('<hgroup')
-      expect(html).not.toContain('Baby Names')
-      expect(html).not.toContain('Combine, organise')
+      const aboveMain = html.slice(0, html.indexOf('<main'))
+      expect(aboveMain).not.toContain('<h1')
+      expect(aboveMain).not.toContain('<hgroup')
+      expect(aboveMain).not.toContain('Baby Names')
+      expect(aboveMain).not.toContain('Combine, organise')
     })
 
     it('is identical on every page', () => {
@@ -57,7 +60,7 @@ describe('routes', () => {
     })
 
     it('colour-codes the nav links by destination', () => {
-      const tags = navHtml(renderAt('/')).match(/<a\b[^>]*>/g) ?? []
+      const tags = navHtml(renderAt('/')).match(/<(?:a|button)\b[^>]*>/g) ?? []
       expect(tags).toHaveLength(3)
       expect(tags[0]).toContain('pill-boys')
       expect(tags[1]).toContain('pill-girls')
@@ -65,24 +68,37 @@ describe('routes', () => {
     })
   })
 
-  describe('last name wording on / (FR-011)', () => {
-    it('prompts for a last name when unset', () => {
-      resetStore()
-      const html = renderAt('/')
-      expect(html).toContain('<label')
-      expect(html).toContain('Last name')
-      expect(html).toContain('Save last name')
-      expect(html).toContain('Set your last name to see full names.')
-      expect(mainHtml(html)).not.toMatch(/surname/i)
+  describe('homepage (FR-010, FR-011)', () => {
+    const paragraph = (html: string) => (mainHtml(html).match(/<p[^>]*>([\s\S]*?)<\/p>/)?.[1] ?? '').replace(/<[^>]*>/g, '')
+
+    it('has a heading and one short purpose statement', () => {
+      const main = mainHtml(renderAt('/'))
+      expect(main).toContain('<h1>Baby Names</h1>')
+      expect(main.match(/<p\b/g) ?? []).toHaveLength(1)
+      const text = paragraph(renderAt('/'))
+      expect((text.match(/[.!?](\s|$)/g) ?? []).length).toBeLessThanOrEqual(2)
+      expect(text.trim().split(/\s+/).length).toBeLessThanOrEqual(40)
+      expect(text).toContain('first and middle names')
+      expect(text).toContain('last name')
+      expect(text).toContain('boys and girls')
     })
 
-    it('shows the last name with a change form when set', () => {
-      seed({ ...emptyStored, surname: 'Smith' })
-      const html = renderAt('/')
-      expect(html).toContain('Last name: Smith')
-      expect(html).toContain('Save last name')
-      expect(html).not.toContain('Set your last name to see full names.')
-      expect(mainHtml(html)).not.toMatch(/surname/i)
+    it('has no form, link, button or navigation in its content', () => {
+      const main = mainHtml(renderAt('/'))
+      for (const tag of ['<form', '<input', '<button', '<a ', '<nav']) expect(main).not.toContain(tag)
+    })
+
+    it('no longer has the old last-name prompt or status line', () => {
+      const main = mainHtml(renderAt('/'))
+      expect(main).not.toContain('Set your last name to see full names')
+      expect(main).not.toContain('Last name:')
+      expect(main).not.toContain('Save last name')
+    })
+
+    it('reads the same with and without a saved last name', () => {
+      const withName = mainHtml(renderAt('/'))
+      resetStore()
+      expect(mainHtml(renderAt('/'))).toBe(withName)
     })
   })
 

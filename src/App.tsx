@@ -1,4 +1,6 @@
+import { useState } from 'react'
 import { Link, Route, Switch, useLocation } from 'wouter'
+import LastNameModal from './components/LastNameModal'
 import { isCategory } from './lib/names'
 import CategoryList from './pages/CategoryList'
 import Home from './pages/Home'
@@ -7,6 +9,8 @@ import NotFound from './pages/NotFound'
 
 function App() {
   const [location] = useLocation()
+  // The modal belongs to the page it was opened on: navigating (e.g. back) closes it.
+  const [openAt, setOpenAt] = useState<string | null>(null)
   const section = location.split('/')[1]?.toLowerCase() ?? ''
   const theme = isCategory(section) ? section : 'home'
   return (
@@ -25,9 +29,9 @@ function App() {
               </Link>
             </li>
             <li>
-              <Link href="/" className="pill pill-home">
+              <button type="button" className="pill pill-home" aria-haspopup="dialog" onClick={() => setOpenAt(location)}>
                 Set Last Name
-              </Link>
+              </button>
             </li>
           </ul>
         </nav>
@@ -50,6 +54,7 @@ function App() {
           <Route component={NotFound} />
         </Switch>
       </main>
+      {openAt === location && <LastNameModal onClose={() => setOpenAt(null)} />}
     </div>
   )
 }

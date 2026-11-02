@@ -1,12 +1,13 @@
-import SurnameForm from '../components/SurnameForm'
-import { useNames } from '../lib/store'
-
 export default function Home() {
-  const { surname } = useNames()
   return (
     <article>
-      {surname === undefined ? <p>Set your last name to see full names.</p> : <p>{`Last name: ${surname}`}</p>}
-      <SurnameForm />
+      <header>
+        <h1>Baby Names</h1>
+      </header>
+      <p>
+        Plan baby names the easy way: add first and middle names for boys and girls, set your last name, and see every
+        full-name combination. Pick Boys or Girls above to start.
+      </p>
     </article>
   )
 }

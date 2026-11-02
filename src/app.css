@@ -87,9 +87,11 @@
 
 /* A solid accent band as the card header. */
 .app article > header {
+  --pico-h1-color: var(--accent-ink);
   --pico-h2-color: var(--accent-ink);
 }
 
+.app article > header h1,
 .app article > header h2 {
   margin-bottom: 0;
 }
@@ -101,21 +103,31 @@ header nav {
 
 /* Pico offsets the first and last <ul> with negative margins; clear them. */
 header nav ul:first-of-type {
+  flex-wrap: wrap;
+  justify-content: center;
   margin-inline: 0;
 }
 
-header nav a.pill {
+header nav a.pill,
+header nav button.pill {
+  border: 0;
   margin: 0;
   padding: 0.45rem 1.1rem;
   border-radius: 999px;
   background-color: var(--pill);
   color: var(--pill-ink);
+  font-family: inherit;
+  font-size: 1rem;
   font-weight: 700;
   text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
 }
 
 header nav a.pill:hover,
-header nav a.pill:focus-visible {
+header nav a.pill:focus-visible,
+header nav button.pill:hover,
+header nav button.pill:focus-visible {
   background-color: var(--pill-hover);
   color: var(--pill-ink);
 }
@@ -172,4 +184,16 @@ header nav a.pill:focus-visible {
 
 .app .add-row select {
   flex: 0 1 15rem;
+}
+
+/* Modal: Save and Close side by side. */
+.app dialog form > button {
+  width: auto;
+  margin: 0 0.5rem 0 0;
+}
+
+/* Form messages (errors, notices) get their own line instead of sitting inline with the buttons. */
+.app form > small {
+  display: block;
+  margin-bottom: 0.75rem;
 }

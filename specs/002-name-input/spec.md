@@ -10,6 +10,8 @@
 
 > Amended by 004-manage-names: names can now be deleted and promoted/demoted between roles; "First and middle name" is preselected; the built-in config, `merge` and `Names` are gone (the visitor's `Stored` lists are the only data).
 
+> Amended by 005-last-name-modal: the last-name prompt on `/` is replaced by a modal opened from the header; `/` is now a static homepage. The in-page prompts on category and name pages stay.
+
 **Input**: User description: "I want user input. If no surname is set up, users should be prompted to add that on the index page, or before they enter another name. Users on /<category> should be presented with an option to add a name to the list for that category, either as a first/middle name or only a middle name."
 
 **Constitution fit**: Serves *list* (users add names to category lists) and *combine* (the surname and middle names feed combinations). Input is kept in the browser only; no accounts or backend.

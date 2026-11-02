@@ -1,5 +1,7 @@
 # UI Contract: Navigation Header
 
+> Amended by 005-last-name-modal: "Set Last Name" now opens a modal (it is a button; Boys and Girls stay links) instead of linking to `/`, which is now a static homepage.
+
 Routes are unchanged from [001](../../001-name-routing/contracts/routes.md); page content changes as below.
 
 ## Header (every route, including not-found)
