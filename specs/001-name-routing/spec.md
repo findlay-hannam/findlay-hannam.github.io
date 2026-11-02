@@ -69,7 +69,7 @@ A visitor moves between the lists and name pages using links, the back button an
 
 ### Edge Cases
 
-- Slug case and trailing slash (`/boys/`, `/Boys`): treated as the same page as the canonical lowercase path.
+- Slug case and trailing slash (`/boys/`, `/Boys`, `/boys/ADA`): render the same page as the lowercase, no-trailing-slash path. No redirect; the address bar is left as typed.
 - Names with spaces, accents or apostrophes: slugs are lowercase, URL-safe and unique within a category.
 - Two names producing the same slug in one category: configuration MUST be rejected or flagged rather than silently shadowed.
 - A first name with no combinations (no middle names configured for its category): shows an empty-state message.
@@ -84,7 +84,7 @@ A visitor moves between the lists and name pages using links, the back button an
 - **FR-004**: A combination MUST be a full name made of the first name, a middle name and the fixed surname; each combination MUST be shown in full (e.g. "First Middle Surname"). A name page MUST show one combination per configured middle name (the category's full set of middle names crossed with that first name).
 - **FR-005**: An unknown slug or category MUST show a not-found page with a link back to a valid page.
 - **FR-006**: Any route MUST work when opened directly, refreshed or bookmarked, not only via in-site navigation.
-- **FR-007**: Browser back and forward MUST move between pages without a full reload losing position.
+- **FR-007**: Browser back and forward MUST move between pages without a full page reload.
 - **FR-008**: `/` MUST show a landing page linking to Boys and Girls.
 - **FR-009**: Names and combinations MUST come from configuration shipped with the site, not user input or a server.
 - **FR-010**: Slugs MUST be unique within a category and derived consistently from the first name.
