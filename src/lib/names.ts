@@ -10,10 +10,8 @@ export const firstNames = (category: CategoryId, cfg: Config = config) =>
 export const findName = (category: CategoryId, slug: string, cfg: Config = config) =>
   firstNames(category, cfg).find((n) => n.slug === slug)
 
-export const combinations = (category: CategoryId, first: string, cfg: Config = config) =>
-  cfg[category].middle.map((middle) => ({
-    first,
-    middle,
-    surname: cfg.surname,
-    full: `${first} ${middle} ${cfg.surname}`,
-  }))
+// A first name is never combined with itself as its middle name (FR-015).
+export const combinations = (category: CategoryId, first: string, surname: string, cfg: Config = config) =>
+  cfg[category].middle
+    .filter((middle) => middle.toLowerCase() !== first.toLowerCase())
+    .map((middle) => ({ first, middle, surname, full: `${first} ${middle} ${surname}` }))

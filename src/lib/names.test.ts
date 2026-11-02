@@ -3,7 +3,6 @@ import type { Config } from '../data/config'
 import { combinations, findName, firstNames } from './names'
 
 const cfg: Config = {
-  surname: 'Smith',
   boys: { first: ['Oliver', "Finn O'Brien"], middle: ['James'] },
   girls: { first: ['Zoë'], middle: [] },
 }
@@ -32,11 +31,27 @@ describe('findName', () => {
 
 describe('combinations', () => {
   it('crosses the first name with every middle name of its category plus the surname', () => {
-    expect(combinations('boys', 'Oliver', cfg)).toEqual([
+    expect(combinations('boys', 'Oliver', 'Smith', cfg)).toEqual([
       { first: 'Oliver', middle: 'James', surname: 'Smith', full: 'Oliver James Smith' },
     ])
   })
   it('is empty when the category has no middle names', () => {
-    expect(combinations('girls', 'Zoë', cfg)).toEqual([])
+    expect(combinations('girls', 'Zoë', 'Smith', cfg)).toEqual([])
+  })
+  const fin: Config = {
+    boys: { first: ['Fin'], middle: ['Fin', 'Noah'] },
+    girls: { first: [], middle: [] },
+  }
+  it('skips a middle name equal to the first name (FR-015)', () => {
+    expect(combinations('boys', 'Fin', 'Smith', fin).map((c) => c.full)).toEqual(['Fin Noah Smith'])
+  })
+  it('ignores case when skipping self-pairing', () => {
+    expect(combinations('boys', 'fin', 'Smith', fin).map((c) => c.full)).toEqual(['fin Noah Smith'])
+  })
+  it('leaves other first names unaffected', () => {
+    expect(combinations('boys', 'Oliver', 'Smith', fin).map((c) => c.full)).toEqual([
+      'Oliver Fin Smith',
+      'Oliver Noah Smith',
+    ])
   })
 })

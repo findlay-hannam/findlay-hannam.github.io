@@ -3,8 +3,6 @@ import { slugify } from '../lib/slug'
 import { config } from './config'
 
 describe('config invariants', () => {
-  it('has a non-empty surname', () => expect(config.surname.trim()).not.toBe(''))
-
   for (const category of ['boys', 'girls'] as const) {
     describe(category, () => {
       const { first, middle } = config[category]
