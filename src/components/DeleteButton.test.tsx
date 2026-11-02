@@ -6,6 +6,7 @@ describe('DeleteButton (suggestion 8: themed confirmation)', () => {
   it('renders just the labelled button until asked', () => {
     const html = renderToString(<DeleteButton category="boys" name="Noah" />)
     expect(html).toMatch(/<button[^>]*aria-label="Delete Noah"[^>]*>Delete<\/button>/)
+    expect(html).toContain('aria-haspopup="dialog"')
     expect(html).not.toContain('<dialog')
   })
 

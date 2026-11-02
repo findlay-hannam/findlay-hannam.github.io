@@ -145,7 +145,39 @@ describe('/<category>/<slug>', () => {
     it('lists combinations as cards with the middle name emphasised', () => {
       const html = renderAt('/boys/oliver')
       expect(html).toContain('<ul class="combo-list">')
-      expect(html).toMatch(/<li>Oliver(<!-- -->)? <strong>James<\/strong> (<!-- -->)?Hannam<\/li>/)
+      // the text sits in its own inline span so its spaces survive the flex row
+      expect(html).toMatch(/<li class="name-row"><span class="name-text"><span>Oliver(<!-- -->)? <strong>James<\/strong> (<!-- -->)?Hannam<\/span><\/span>/)
+    })
+  })
+
+  describe('middle-name actions on each combination', () => {
+    // fixture boys: first Arthur, Oliver; middle Arthur, Edward, James, Oliver
+    const menuFor = (html: string, middle: string) =>
+      html.match(new RegExp(`<details class="row-menu">\\s*<summary aria-label="Actions for ${middle}">[\\s\\S]*?</details>`))?.[0] ?? ''
+
+    it('gives every combination a menu that can delete its middle name', () => {
+      const html = renderAt('/boys/oliver')
+      for (const middle of ['Arthur', 'Edward', 'James']) expect(menuFor(html, middle), middle).toContain(`aria-label="Delete ${middle}"`)
+    })
+
+    it('offers an upgrade only for middle-only names', () => {
+      const html = renderAt('/boys/oliver')
+      expect(menuFor(html, 'Edward')).toContain('aria-label="Make first and middle: Edward"')
+      expect(menuFor(html, 'James')).toContain('aria-label="Make first and middle: James"')
+      expect(menuFor(html, 'Arthur')).not.toContain('Make first and middle')
+      expect(menuFor(html, 'Arthur')).not.toContain('Make middle only')
+    })
+
+    it('keeps the page name\'s own Delete outside the menus', () => {
+      const outside = renderAt('/boys/oliver').replace(/<details[\s\S]*?<\/details>/g, '')
+      expect(outside).toContain('aria-label="Delete Oliver"')
+      // with Delete also on every card, the page's own button says whose it is
+      expect(outside).toMatch(/<button[^>]*aria-label="Delete Oliver"[^>]*>Delete Oliver<\/button>/)
+    })
+
+    it('shows no menus while the last-name prompt replaces the combinations', () => {
+      seed({ ...fixture, surname: undefined })
+      expect(renderAt('/boys/oliver')).not.toContain('row-menu')
     })
   })
 

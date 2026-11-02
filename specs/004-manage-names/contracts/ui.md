@@ -29,7 +29,9 @@ All are `<button type="button">`. If a delete or move cannot be persisted, `wind
 ## `/<category>/<slug>` (found)
 
 - Header band: the name, with "{n} combinations" / "1 combination" / "No combinations yet" under it. Combinations are soft cards, "{First} **{Middle}** {Last}", in alphabetical order of middle name; with none, "Add more middle names to the {category} list to see full names."; or the last-name prompt.
-- Adds a Delete control (same label and behaviour as above) after the content.
+- Each combination card has a "⋯" menu (`Actions for {middle}`) acting on its middle name: **Make first and middle** (only when that middle name is middle-only) and **Delete** (themed confirmation; you stay on the page).
+- The page's own Delete comes after the content and reads "Delete {name}" (not just "Delete"), so it can't be confused with a card's Delete.
+- Any row-menu action closes its menu and returns focus to its ⋯, unless it opens a dialog or shows an error.
 - No other navigation or role-change controls (003, FR-007 here).
 
 ## Add-name form

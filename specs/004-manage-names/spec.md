@@ -141,7 +141,7 @@ A new visitor sees empty lists, not sample names such as Oliver, Arthur or Finn 
 - Placeholder names are removed entirely, with no built-in names at all; every name a visitor sees is one they added. Stored data is untouched.
 - "Up/downgrade" follows 002's role model: a first name is always also a middle name. Promotion makes a middle-only name first-and-middle; demotion makes a first-and-middle name middle-only. A "first name only" role is not introduced.
 - To make middle-only names manageable, `/<category>` now shows them in their own group. Previously they were visible only inside combinations.
-- Role changes (promote and demote) are on `/<category>` only. A first name's own page offers delete only.
+- Role changes (promote and demote) are on `/<category>` only. A first name's own page offers delete only. (Amended after 004: each combination card on a name page also has a "⋯" menu acting on its middle name: Delete, plus "Make first and middle" when that middle name is middle-only.)
 - Deleting from a name page returns the visitor to the category list because that page no longer exists.
 - This amends 001 (FR-009: names from shipped configuration, and sample data) and 002 (editing and removing out of scope; "upgrade" not possible; no radio preselected).
 - Combinations on a name page list the middle names in the same alphabetical order, so every list on the site has one predictable order.

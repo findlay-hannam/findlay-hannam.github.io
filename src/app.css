@@ -340,9 +340,6 @@ header nav button.pill {
 .combo-list > li {
   list-style: none;
   margin-bottom: 0.5rem;
-  padding: 0.6rem 1rem;
-  border-radius: 1rem;
-  background-color: color-mix(in srgb, var(--accent) 30%, var(--surface));
 }
 
 .combo-list strong {

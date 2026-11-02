@@ -5,6 +5,7 @@ import type { ReactNode } from 'react'
  * One "⋯" menu per name, so rows stay calm. Native <details> handles toggling and keyboard;
  * while open, a press anywhere outside it or Escape closes it (Escape returns focus to ⋯).
  * Presses and Escape inside an open dialog (e.g. the delete confirmation) are left to the dialog.
+ * Choosing an action closes the menu (focus back on ⋯), unless it opens a dialog or shows an error.
  */
 export default function RowMenu({ name, children }: { name: string; children: ReactNode }) {
   const ref = useRef<HTMLDetailsElement>(null)
@@ -33,7 +34,23 @@ export default function RowMenu({ name, children }: { name: string; children: Re
   return (
     <details ref={ref} className="row-menu" onToggle={(e) => setOpen(e.currentTarget.open)}>
       <summary aria-label={`Actions for ${name}`}>⋯</summary>
-      <div className="row-menu-items">{children}</div>
+      <div
+        className="row-menu-items"
+        onClick={(e) => {
+          const button = (e.target as Element).closest('button')
+          // Clicks inside a dialog opened from here (e.g. Cancel in the delete confirmation) are not menu actions.
+          if (!button || button.hasAttribute('aria-haspopup') || button.closest('dialog')) return
+          // After React has rendered the action's result: keep the menu open to show an error.
+          setTimeout(() => {
+            const d = ref.current
+            if (!d?.open || d.querySelector('[role="alert"]')) return
+            d.open = false
+            d.querySelector('summary')?.focus()
+          })
+        }}
+      >
+        {children}
+      </div>
     </details>
   )
 }
