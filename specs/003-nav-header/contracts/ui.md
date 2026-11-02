@@ -1,0 +1,30 @@
+# UI Contract: Navigation Header
+
+Routes are unchanged from [001](../../001-name-routing/contracts/routes.md); page content changes as below.
+
+## Header (every route, including not-found)
+
+- Exactly one `<nav aria-label="Main">` containing a list of three links, in order:
+
+| Label | `href` |
+|---|---|
+| Boys | `/boys` |
+| Girls | `/girls` |
+| Set Last Name | `/` |
+
+- Rendered outside the route switch; identical on every page; real anchors.
+- Site title (`h1`) and tagline stay in the header but are not links.
+
+## Page content changes
+
+| Page | Before | After |
+|---|---|---|
+| `/` | Last-name form plus a Boys/Girls link list | Last-name form only (visible text "Last name") |
+| `/<category>` | Add-name form or prompt, name list | Unchanged (names still link to their pages) |
+| `/<category>/<slug>` | Combinations, then "Back to the {category} list" | Combinations only |
+| `/<category>/<slug>` (unknown) | "Name not found" and a back link | "Name not found" only |
+| anything else | "Page not found" and "Back home" | "Page not found" only |
+
+## Visible wording
+
+"Surname" → "Last name": form label, button ("Save last name"), `/` lead-in and status line, and validation messages ("Enter a last name.", "Last name must be 50 characters or fewer.").
