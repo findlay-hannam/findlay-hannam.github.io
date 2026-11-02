@@ -54,9 +54,19 @@ async function launchChrome() {
     targets = await (await fetch(`http://127.0.0.1:${port}/json`)).json()
     await sleep(100)
   }
-  const stop = () => {
-    proc.kill()
-    rmSync(profile, { recursive: true, force: true })
+  // Wait for Chrome to exit before removing its profile: it writes files while shutting down.
+  // Removing the temp folder is best effort and never fails the run.
+  const stop = async () => {
+    if (proc.exitCode === null && proc.signalCode === null) {
+      const exited = new Promise((resolve) => proc.once('exit', resolve))
+      proc.kill()
+      await Promise.race([exited, sleep(5000)])
+    }
+    try {
+      rmSync(profile, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 })
+    } catch {
+      // leave it for the OS to clean up
+    }
   }
   return { url: targets.find((t) => t.type === 'page').webSocketDebuggerUrl, stop }
 }
@@ -442,8 +452,7 @@ const server = await preview({ preview: { port: PORT, strictPort: true }, logLev
 const chrome = await launchChrome()
 const timer = setTimeout(() => {
   console.error(`Timed out after ${TIMEOUT_MS / 1000}s`)
-  chrome.stop()
-  process.exit(1)
+  chrome.stop().finally(() => process.exit(1))
 }, TIMEOUT_MS)
 
 let results = []
@@ -454,7 +463,7 @@ try {
   cdp.ws.close()
 } finally {
   clearTimeout(timer)
-  chrome.stop()
+  await chrome.stop()
   await server.close()
 }
 
