@@ -1,27 +1,26 @@
 import { renderToString } from 'react-dom/server'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
-import { config } from '../data/config'
-import type { Names } from '../lib/rules'
 import { emptyStored } from '../lib/rules'
-import { mainHtml, renderAt, resetStore, seed } from '../test/renderAt'
+import type { Stored } from '../lib/rules'
+import { fixture, mainHtml, renderAt, resetStore, seed } from '../test/renderAt'
 import CategoryList from './CategoryList'
 
 describe('/boys and /girls', () => {
-  beforeEach(() => seed({ ...emptyStored, surname: 'Hannam' }))
+  beforeEach(() => seed(fixture))
   afterEach(resetStore)
 
   it('lists only boys names on /boys, as links in a list', () => {
     const html = renderAt('/boys')
     expect(html).toContain('<ul')
-    for (const n of config.boys.first) expect(html).toContain(`>${n.replace("'", '&#x27;')}</a>`)
+    for (const n of fixture.boys.first) expect(html).toContain(`>${n.replace("'", '&#x27;')}</a>`)
     expect(html).toContain('href="/boys/oliver"')
-    for (const n of config.girls.first) expect(html).not.toContain(n)
+    for (const n of fixture.girls.first) expect(html).not.toContain(n)
   })
 
   it('keeps one content link per listed name (FR-008)', () => {
     const main = mainHtml(renderAt('/boys'))
     const anchors = main.match(/<a /g) ?? []
-    expect(anchors).toHaveLength(config.boys.first.length)
+    expect(anchors).toHaveLength(fixture.boys.first.length)
     expect(main).toContain('href="/boys/oliver"')
   })
 
@@ -32,14 +31,25 @@ describe('/boys and /girls', () => {
   })
 
   it('shows an empty-state message when a category has no names', () => {
-    const empty: Names = { surname: 'X', cfg: { boys: { first: [], middle: [] }, girls: { first: [], middle: [] } } }
+    const empty: Stored = { ...emptyStored, surname: 'X' }
     const html = renderToString(<CategoryList category="boys" names={empty} />)
     expect(html).toContain('No names yet')
     expect(html).not.toContain('<ul')
   })
 
+  describe('as a fresh visitor (FR-001, SC-004)', () => {
+    beforeEach(resetStore)
+
+    it.each(['/boys', '/girls'])('%s shows the empty state and no sample names', (path) => {
+      const html = renderAt(path)
+      expect(html).toContain('No names yet.')
+      expect(mainHtml(html)).not.toContain('<li')
+      for (const sample of ['Oliver', 'Arthur', 'Finn', 'Ada', 'Zoë', 'Mary Ann']) expect(html).not.toContain(sample)
+    })
+  })
+
   describe('with a surname set', () => {
-    it('shows the add-name form with an unselected role choice', () => {
+    it('shows the add-name form with "First and middle name" selected by default (FR-009)', () => {
       const html = renderAt('/boys')
       expect(html).toContain('<label')
       expect(html).toContain('Name')
@@ -48,15 +58,18 @@ describe('/boys and /girls', () => {
       expect(html).toContain('First and middle name')
       expect(html).toContain('Middle name only')
       expect(html).toContain('type="radio"')
-      expect(html).not.toContain('checked')
+      const radios = html.match(/<input[^>]*type="radio"[^>]*>/g) ?? []
+      expect(radios).toHaveLength(2)
+      expect(radios[0]).toMatch(/checked/)
+      expect(radios[1]).not.toMatch(/checked/)
       expect(html).toContain('Add name')
     })
 
-    it('lists added first-and-middle names but not middle-only names', () => {
+    it('links added first-and-middle names and shows middle-only names without a link', () => {
       seed({ ...emptyStored, surname: 'Hannam', boys: { first: ['Noah'], middle: ['Noah', 'Lee'] } })
       const html = renderAt('/boys')
       expect(html).toContain('href="/boys/noah"')
-      expect(html).not.toContain('>Lee<')
+      expect(html).toContain('>Lee<')
       expect(html).not.toContain('href="/boys/lee"')
     })
 
@@ -67,7 +80,7 @@ describe('/boys and /girls', () => {
   })
 
   describe('with no surname set', () => {
-    beforeEach(resetStore)
+    beforeEach(() => seed({ ...fixture, surname: undefined }))
 
     it('shows the last name prompt instead of the add-name form, and still lists names', () => {
       const html = renderAt('/girls')
@@ -81,6 +94,60 @@ describe('/boys and /girls', () => {
       const html = renderAt('/girls')
       expect(html).toContain('Add name')
       expect(html).not.toContain('Save last name')
+    })
+  })
+
+  describe('groups and delete controls (FR-002, FR-003)', () => {
+    const groups: Stored = {
+      ...emptyStored,
+      surname: 'Hannam',
+      boys: { first: ['Oliver', 'arthur'], middle: ['arthur', 'Oliver', 'lee', 'James'] },
+    }
+    beforeEach(() => seed(groups))
+
+    it('shows first-and-middle names as links and middle-only names as plain text, alphabetically', () => {
+      const main = mainHtml(renderAt('/boys'))
+      expect(main).toContain('First and middle names')
+      expect(main).toContain('Middle names only')
+      expect(main.indexOf('href="/boys/arthur"')).toBeLessThan(main.indexOf('href="/boys/oliver"'))
+      expect(main.indexOf('>James<')).toBeLessThan(main.indexOf('>lee<'))
+      expect(main).not.toContain('href="/boys/lee"')
+      expect(main).not.toContain('href="/boys/james"')
+      expect((main.match(/>arthur</g) ?? []).length).toBe(1)
+    })
+
+    it.each(['arthur', 'Oliver', 'James', 'lee'])('has a delete button for %s', (name) => {
+      expect(mainHtml(renderAt('/boys'))).toContain(`aria-label="Delete ${name}"`)
+    })
+
+    it('offers the right role change per group (FR-007, FR-008)', () => {
+      const main = mainHtml(renderAt('/boys'))
+      for (const name of ['arthur', 'Oliver']) expect(main).toContain(`aria-label="Make middle only: ${name}"`)
+      for (const name of ['James', 'lee']) expect(main).toContain(`aria-label="Make first and middle: ${name}"`)
+      expect(main).not.toContain('aria-label="Make first and middle: arthur"')
+      expect(main).not.toContain('aria-label="Make middle only: lee"')
+      expect(main).toContain('>Make middle only</button>')
+      expect(main).toContain('>Make first and middle</button>')
+    })
+
+    it('shows the empty state and no group headings when both groups are empty', () => {
+      seed({ ...emptyStored, surname: 'Hannam' })
+      const main = mainHtml(renderAt('/boys'))
+      expect(main).toContain('No names yet.')
+      expect(main).not.toContain('First and middle names')
+      expect(main).not.toContain('Middle names only')
+    })
+
+    it('omits the middle-only heading when there are no middle-only names', () => {
+      seed({ ...emptyStored, surname: 'Hannam', boys: { first: ['Noah'], middle: ['Noah'] } })
+      const main = mainHtml(renderAt('/boys'))
+      expect(main).toContain('First and middle names')
+      expect(main).not.toContain('Middle names only')
+    })
+
+    it('shows delete buttons with no last name set', () => {
+      seed({ ...groups, surname: undefined })
+      expect(mainHtml(renderAt('/boys'))).toContain('aria-label="Delete Oliver"')
     })
   })
 })

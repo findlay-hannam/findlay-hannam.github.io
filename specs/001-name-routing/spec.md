@@ -8,6 +8,7 @@
 
 > Amended by 002-name-input: the fixed surname is removed; the visitor enters their own surname; combinations skip self-pairing (a first name is never its own middle name).
 > Amended by 003-nav-header: the landing-page Boys/Girls links (FR-008) and the back/home links (FR-005, User Story 2 scenario 2) are replaced by a header with Boys, Girls and Set Last Name.
+> Amended by 004-manage-names: no names are shipped any more (FR-009 shipped configuration and the sample data are removed); the visitor's saved names are the only data.
 
 **Input**: User description: "I want to enable basic routing. A user should be able to land on /boys or /girls and see their full list of configured boys or girls names. If they go to e.g boys/[first-name-slug] it should show the combinations for that first name only"
 

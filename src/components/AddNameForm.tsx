@@ -1,23 +1,22 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
-import { config } from '../data/config'
-import type { CategoryId } from '../data/config'
 import { addName } from '../lib/rules'
-import type { Role } from '../lib/rules'
+import type { CategoryId, Role } from '../lib/rules'
 import { store } from '../lib/store'
 
 export default function AddNameForm({ category }: { category: CategoryId }) {
   const [value, setValue] = useState('')
-  const [role, setRole] = useState<Role | undefined>()
+  const [role, setRole] = useState<Role>('both')
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
 
   function onSubmit(e: FormEvent) {
     e.preventDefault()
-    const r = addName(store.getSnapshot(), config, category, value, role)
+    const r = addName(store.getSnapshot(), category, value, role)
     if (!r.ok) return setError(r.error)
     setError('')
     setValue('')
+    setRole('both')
     setNotice(store.save(r.value) ? '' : 'Saved for this visit only. Browser storage is unavailable.')
   }
 

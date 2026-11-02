@@ -1,24 +1,23 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { renderToString } from 'react-dom/server'
 import { Router } from 'wouter'
-import { config } from '../data/config'
-import type { Names } from '../lib/rules'
-import { emptyStored } from '../lib/rules'
+import { demote, emptyStored, promote } from '../lib/rules'
+import type { Stored } from '../lib/rules'
 import { slugify } from '../lib/slug'
-import { mainHtml, renderAt, resetStore, seed } from '../test/renderAt'
+import { fixture, mainHtml, renderAt, resetStore, seed } from '../test/renderAt'
 import NamePage from './NamePage'
 
 const esc = (s: string) => s.replace(/'/g, '&#x27;')
 
 describe('/<category>/<slug>', () => {
-  beforeEach(() => seed({ ...emptyStored, surname: 'Hannam' }))
+  beforeEach(() => seed(fixture))
   afterEach(resetStore)
 
   it('shows only that name’s combinations', () => {
     const html = renderAt('/boys/oliver')
     expect(html).toContain('Oliver James Hannam')
     expect(html).toContain('Oliver Edward Hannam')
-    expect(html).not.toContain('Arthur')
+    expect(html).not.toContain('Arthur Edward')
   })
 
   it('uses the category’s own middle names', () => {
@@ -41,7 +40,7 @@ describe('/<category>/<slug>', () => {
   })
 
   it('shows an empty state when the category has no middle names', () => {
-    const names: Names = { surname: 'X', cfg: { boys: { first: ['Sam'], middle: [] }, girls: { first: [], middle: [] } } }
+    const names: Stored = { ...emptyStored, surname: 'X', boys: { first: ['Sam'], middle: [] } }
     const html = renderToString(
       <Router ssrPath="/">
         <NamePage category="boys" slug="sam" names={names} />
@@ -51,10 +50,7 @@ describe('/<category>/<slug>', () => {
   })
 
   it('never pairs a first name with itself as a middle name (FR-015)', () => {
-    const names: Names = {
-      surname: 'X',
-      cfg: { boys: { first: ['Fin'], middle: ['Fin', 'Noah'] }, girls: { first: [], middle: [] } },
-    }
+    const names: Stored = { ...emptyStored, surname: 'X', boys: { first: ['Fin'], middle: ['Fin', 'Noah'] } }
     const html = renderToString(
       <Router ssrPath="/">
         <NamePage category="boys" slug="fin" names={names} />
@@ -65,7 +61,7 @@ describe('/<category>/<slug>', () => {
   })
 
   it('includes added names as middle names for every first name in that category', () => {
-    seed({ ...emptyStored, surname: 'Hannam', boys: { first: ['Noah'], middle: ['Noah', 'Lee'] } })
+    seed({ ...emptyStored, surname: 'Hannam', boys: { first: ['Noah', 'Oliver'], middle: ['Lee', 'Noah', 'Oliver'] } })
     const oliver = renderAt('/boys/oliver')
     expect(oliver).toContain('Oliver Noah Hannam')
     expect(oliver).toContain('Oliver Lee Hannam')
@@ -74,7 +70,7 @@ describe('/<category>/<slug>', () => {
   })
 
   it('does not leak boys additions into girls pages', () => {
-    seed({ ...emptyStored, surname: 'Hannam', boys: { first: ['Noah'], middle: ['Noah', 'Lee'] } })
+    seed({ ...fixture, boys: { first: ['Noah'], middle: ['Lee', 'Noah'] } })
     const ada = renderAt('/girls/ada')
     expect(ada).not.toContain('Noah')
     expect(ada).not.toContain('Lee')
@@ -82,7 +78,7 @@ describe('/<category>/<slug>', () => {
   })
 
   describe('with no surname set', () => {
-    beforeEach(resetStore)
+    beforeEach(() => seed({ ...fixture, surname: undefined }))
 
     it('shows the last name prompt instead of combinations', () => {
       const html = renderAt('/boys/oliver')
@@ -91,7 +87,7 @@ describe('/<category>/<slug>', () => {
     })
 
     it('shows combinations once a surname is saved', () => {
-      seed({ ...emptyStored, surname: 'Hannam' })
+      seed(fixture)
       const html = renderAt('/boys/oliver')
       expect(html).toContain('Oliver James Hannam')
       expect(html).not.toContain('Save last name')
@@ -104,14 +100,56 @@ describe('/<category>/<slug>', () => {
     })
   })
 
-  it('renders every configured name page (SC-001)', () => {
+  describe('role changes (FR-007, FR-008, FR-014)', () => {
+    it('a demoted name has no page but stays a middle name, in alphabetical order', () => {
+      seed(demote(fixture, 'boys', 'Oliver'))
+      expect(renderAt('/boys/oliver')).toContain('Name not found')
+      const arthur = renderAt('/boys/arthur')
+      expect(arthur).toContain('Arthur Oliver Hannam')
+      expect(arthur.indexOf('Arthur Edward Hannam')).toBeLessThan(arthur.indexOf('Arthur James Hannam'))
+      expect(arthur.indexOf('Arthur James Hannam')).toBeLessThan(arthur.indexOf('Arthur Oliver Hannam'))
+    })
+
+    it('a promoted middle-only name gets a page with its combinations', () => {
+      const r = promote(fixture, 'boys', 'Edward')
+      if (!r.ok) throw new Error(r.error)
+      seed(r.value)
+      const html = renderAt('/boys/edward')
+      expect(html).toContain('<h2>Edward')
+      expect(html).toContain('Edward Arthur Hannam')
+      expect(html).not.toContain('Edward Edward')
+    })
+  })
+
+  describe('delete control (FR-004)', () => {
+    it('is on a found name page', () => {
+      expect(renderAt('/boys/oliver')).toContain('aria-label="Delete Oliver"')
+    })
+    it('is on a found name page with no last name set', () => {
+      seed({ ...fixture, surname: undefined })
+      expect(renderAt('/boys/oliver')).toContain('aria-label="Delete Oliver"')
+    })
+    it('is not on a not-found page', () => {
+      expect(renderAt('/boys/nope')).not.toContain('Delete')
+    })
+  })
+
+  it('renders every seeded name page (SC-001)', () => {
     for (const category of ['boys', 'girls'] as const) {
-      const { first, middle } = config[category]
+      const { first, middle } = fixture[category]
       for (const name of first) {
         const html = renderAt(`/${category}/${slugify(name)}`)
         expect(html, name).toContain('<h2>' + esc(name))
-        for (const m of middle) expect(html).toContain(esc(`${name} ${m} Hannam`))
+        for (const m of middle.filter((x) => x !== name)) expect(html).toContain(esc(`${name} ${m} Hannam`))
       }
     }
+  })
+
+  describe('as a fresh visitor (FR-001)', () => {
+    beforeEach(resetStore)
+
+    it.each(['/boys/oliver', '/girls/ada'])('%s shows not found', (path) => {
+      expect(renderAt(path)).toContain('Name not found')
+    })
   })
 })

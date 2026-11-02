@@ -1,11 +1,18 @@
 import { renderToString } from 'react-dom/server'
 import { Router } from 'wouter'
 import App from '../App'
-import { emptyStored } from '../lib/rules'
+import { emptyStored, tidy } from '../lib/rules'
 import type { Stored } from '../lib/rules'
 import { store } from '../lib/store'
 
-export const seed = (stored: Stored) => void store.save(stored)
+export const seed = (stored: Stored) => void store.save(tidy(stored))
+
+// Shared page-test data: every first name is also a middle name (the stored-data invariant).
+export const fixture: Stored = {
+  surname: 'Hannam',
+  boys: { first: ['Arthur', 'Oliver'], middle: ['Arthur', 'Edward', 'James', 'Oliver'] },
+  girls: { first: ['Ada'], middle: ['Ada', 'Rose'] },
+}
 export const resetStore = () => void store.save(emptyStored)
 
 export const renderAt = (path: string) =>

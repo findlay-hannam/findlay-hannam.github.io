@@ -2,6 +2,8 @@
 
 > Amended by 003-nav-header: visible wording is 'last name'; messages now read 'Enter a last name.' and 'Last name must be 50 characters or fewer.'
 
+> Amended by 004-manage-names: names can now be deleted and promoted/demoted between roles; "First and middle name" is preselected; the built-in config, `merge` and `Names` are gone (the visitor's `Stored` lists are the only data).
+
 Routes are unchanged from [001](../../001-name-routing/contracts/routes.md). This adds forms and stored data.
 
 ## Per-route content

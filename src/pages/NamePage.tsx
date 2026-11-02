@@ -1,15 +1,19 @@
+import { useLocation } from 'wouter'
+import DeleteButton from '../components/DeleteButton'
 import SurnameForm from '../components/SurnameForm'
-import type { CategoryId } from '../data/config'
 import { combinations, findName } from '../lib/names'
-import type { Names } from '../lib/rules'
+import type { CategoryId, Stored } from '../lib/rules'
 import { useNames } from '../lib/store'
 
-type Props = { category: CategoryId; slug: string; names?: Names }
+type Props = { category: CategoryId; slug: string; names?: Stored }
 
 export default function NamePage({ category, slug, names }: Props) {
   const live = useNames()
-  const { surname, cfg } = names ?? live
-  const found = findName(category, slug, cfg)
+  const [, navigate] = useLocation()
+  const data = names ?? live
+  const { surname } = data
+  const lists = data[category]
+  const found = findName(lists, slug)
   if (!found) {
     return (
       <article>
@@ -17,7 +21,7 @@ export default function NamePage({ category, slug, names }: Props) {
       </article>
     )
   }
-  const combos = surname === undefined ? undefined : combinations(category, found.name, surname, cfg)
+  const combos = surname === undefined ? undefined : combinations(lists, found.name, surname)
   return (
     <article>
       <header>
@@ -34,6 +38,7 @@ export default function NamePage({ category, slug, names }: Props) {
           ))}
         </ul>
       )}
+      <DeleteButton category={category} name={found.name} onDeleted={() => navigate(`/${category}`)} />
     </article>
   )
 }

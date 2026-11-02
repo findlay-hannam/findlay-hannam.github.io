@@ -1,7 +1,7 @@
-import { describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { emptyStored } from './rules'
 import type { Stored } from './rules'
-import { createStore } from './store'
+import { createStore, persist } from './store'
 
 const KEY = 'baby-names:v1'
 
@@ -81,6 +81,42 @@ describe('createStore', () => {
     const st = createStore(undefined)
     expect(st.getSnapshot()).toEqual(emptyStored)
     expect(st.save(sample)).toBe(false)
+    expect(st.getSnapshot()).toEqual(sample)
+  })
+})
+
+describe('loading saved data', () => {
+  it('sorts and dedupes saved names without losing any (FR-013, FR-002)', () => {
+    const raw = JSON.stringify({
+      boys: { first: ['zed', 'Amy', 'amy'], middle: ['zed', 'Amy', 'amy', 'Lee'] },
+      girls: { first: [], middle: [] },
+    })
+    const s = createStore(fake(raw)).getSnapshot()
+    expect(s.boys).toEqual({ first: ['Amy', 'zed'], middle: ['Amy', 'Lee', 'zed'] })
+  })
+})
+
+describe('persist', () => {
+  afterEach(() => vi.unstubAllGlobals())
+  const MESSAGE = 'Saved for this visit only. Browser storage is unavailable.'
+
+  it('alerts once when the change cannot be saved, and still applies it', () => {
+    const alert = vi.fn()
+    vi.stubGlobal('window', { alert })
+    const failing = { getItem: () => null, setItem: () => { throw new Error('quota') } } as unknown as Storage
+    const st = createStore(failing)
+    persist(sample, st)
+    expect(alert).toHaveBeenCalledTimes(1)
+    expect(alert).toHaveBeenCalledWith(MESSAGE)
+    expect(st.getSnapshot()).toEqual(sample)
+  })
+
+  it('does not alert when the change was saved', () => {
+    const alert = vi.fn()
+    vi.stubGlobal('window', { alert })
+    const st = createStore(fake())
+    persist(sample, st)
+    expect(alert).not.toHaveBeenCalled()
     expect(st.getSnapshot()).toEqual(sample)
   })
 })

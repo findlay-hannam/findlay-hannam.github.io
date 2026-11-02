@@ -1,5 +1,7 @@
 # Data Model: Name Input
 
+> Amended by 004-manage-names: names can now be deleted and promoted/demoted between roles; "First and middle name" is preselected; the built-in config, `merge` and `Names` are gone (the visitor's `Stored` lists are the only data).
+
 ## Types
 
 ```ts

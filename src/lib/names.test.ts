@@ -1,57 +1,57 @@
 import { describe, expect, it } from 'vitest'
-import type { Config } from '../data/config'
-import { combinations, findName, firstNames } from './names'
+import type { Lists } from './rules'
+import { combinations, findName, firstNames, middleOnly } from './names'
 
-const cfg: Config = {
-  boys: { first: ['Oliver', "Finn O'Brien"], middle: ['James'] },
-  girls: { first: ['Zoë'], middle: [] },
-}
+const lists: Lists = { first: ['Oliver', "Finn O'Brien"], middle: ['James', 'Oliver'] }
 
 describe('firstNames', () => {
-  it('returns names with slugs for the requested category only', () => {
-    expect(firstNames('boys', cfg)).toEqual([
+  it('returns names with slugs, in list order', () => {
+    expect(firstNames(lists)).toEqual([
       { name: 'Oliver', slug: 'oliver' },
       { name: "Finn O'Brien", slug: 'finn-obrien' },
     ])
-    expect(firstNames('girls', cfg)).toEqual([{ name: 'Zoë', slug: 'zoe' }])
+  })
+  it('is empty for empty lists', () => {
+    expect(firstNames({ first: [], middle: [] })).toEqual([])
   })
 })
 
 describe('findName', () => {
-  it('finds a name by slug in its own category', () => {
-    expect(findName('boys', 'finn-obrien', cfg)).toEqual({ name: "Finn O'Brien", slug: 'finn-obrien' })
+  it('finds a name by slug', () => {
+    expect(findName(lists, 'finn-obrien')).toEqual({ name: "Finn O'Brien", slug: 'finn-obrien' })
   })
   it('returns undefined for an unknown slug', () => {
-    expect(findName('boys', 'nope', cfg)).toBeUndefined()
+    expect(findName(lists, 'nope')).toBeUndefined()
   })
-  it('does not find a girls slug under boys', () => {
-    expect(findName('boys', 'zoe', cfg)).toBeUndefined()
+})
+
+describe('middleOnly', () => {
+  it('returns middle names that are not first names, in order', () => {
+    expect(middleOnly({ first: ['Oliver'], middle: ['James', 'Oliver', 'lee'] })).toEqual(['James', 'lee'])
+  })
+  it('ignores case when comparing', () => {
+    expect(middleOnly({ first: ['oliver'], middle: ['Oliver'] })).toEqual([])
   })
 })
 
 describe('combinations', () => {
-  it('crosses the first name with every middle name of its category plus the surname', () => {
-    expect(combinations('boys', 'Oliver', 'Smith', cfg)).toEqual([
+  it('crosses the first name with the middle names, skipping itself', () => {
+    expect(combinations(lists, 'Oliver', 'Smith')).toEqual([
       { first: 'Oliver', middle: 'James', surname: 'Smith', full: 'Oliver James Smith' },
     ])
   })
-  it('is empty when the category has no middle names', () => {
-    expect(combinations('girls', 'Zoë', 'Smith', cfg)).toEqual([])
+  it('is empty when there are no middle names', () => {
+    expect(combinations({ first: ['Zoë'], middle: [] }, 'Zoë', 'Smith')).toEqual([])
   })
-  const fin: Config = {
-    boys: { first: ['Fin'], middle: ['Fin', 'Noah'] },
-    girls: { first: [], middle: [] },
-  }
+
+  const fin: Lists = { first: ['Fin'], middle: ['Fin', 'Noah'] }
   it('skips a middle name equal to the first name (FR-015)', () => {
-    expect(combinations('boys', 'Fin', 'Smith', fin).map((c) => c.full)).toEqual(['Fin Noah Smith'])
+    expect(combinations(fin, 'Fin', 'Smith').map((c) => c.full)).toEqual(['Fin Noah Smith'])
   })
   it('ignores case when skipping self-pairing', () => {
-    expect(combinations('boys', 'fin', 'Smith', fin).map((c) => c.full)).toEqual(['fin Noah Smith'])
+    expect(combinations(fin, 'fin', 'Smith').map((c) => c.full)).toEqual(['fin Noah Smith'])
   })
-  it('leaves other first names unaffected', () => {
-    expect(combinations('boys', 'Oliver', 'Smith', fin).map((c) => c.full)).toEqual([
-      'Oliver Fin Smith',
-      'Oliver Noah Smith',
-    ])
+  it('leaves other first names unaffected, in middle-list order', () => {
+    expect(combinations(fin, 'Oliver', 'Smith').map((c) => c.full)).toEqual(['Oliver Fin Smith', 'Oliver Noah Smith'])
   })
 })

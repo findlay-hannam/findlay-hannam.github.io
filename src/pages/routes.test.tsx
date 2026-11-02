@@ -1,9 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { emptyStored } from '../lib/rules'
-import { mainHtml, navCount, navHtml, navLinks, renderAt, resetStore, seed } from '../test/renderAt'
+import { fixture, mainHtml, navCount, navHtml, navLinks, renderAt, resetStore, seed } from '../test/renderAt'
 
 describe('routes', () => {
-  beforeEach(() => seed({ ...emptyStored, surname: 'Hannam' }))
+  beforeEach(() => seed(fixture))
   afterEach(resetStore)
 
   describe('header on every page (FR-001–FR-005)', () => {

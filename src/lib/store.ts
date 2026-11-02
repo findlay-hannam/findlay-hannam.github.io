@@ -1,7 +1,6 @@
-import { useMemo, useSyncExternalStore } from 'react'
-import { config } from '../data/config'
-import { emptyStored, merge } from './rules'
-import type { Names, Stored } from './rules'
+import { useSyncExternalStore } from 'react'
+import { emptyStored, tidy } from './rules'
+import type { Stored } from './rules'
 
 const KEY = 'baby-names:v1'
 
@@ -16,7 +15,7 @@ function parse(raw: string | null): Stored {
     const o = v as Record<string, unknown>
     if (!isAdded(o.boys) || !isAdded(o.girls)) return emptyStored
     if (o.surname !== undefined && typeof o.surname !== 'string') return emptyStored
-    return v as Stored
+    return tidy(v as Stored)
   } catch {
     return emptyStored
   }
@@ -68,7 +67,11 @@ function browserStorage(): Storage | undefined {
 
 export const store = createStore(browserStorage())
 
-export function useNames(): Names {
-  const stored = useSyncExternalStore(store.subscribe, store.getSnapshot, store.getServerSnapshot)
-  return useMemo(() => merge(config, stored), [stored])
+export function useNames(): Stored {
+  return useSyncExternalStore(store.subscribe, store.getSnapshot, store.getServerSnapshot)
+}
+
+/** Save a change; tell the visitor if it could not be kept beyond this visit. */
+export function persist(next: Stored, s = store): void {
+  if (!s.save(next)) window.alert('Saved for this visit only. Browser storage is unavailable.')
 }
