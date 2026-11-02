@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { Lists } from './rules'
-import { combinations, findName, firstNames, middleOnly } from './names'
+import { combinations, findMiddleOnly, findName, firstNames, middleOnly, nameFromSlug } from './names'
 
 const lists: Lists = { first: ['Oliver', "Finn O'Brien"], middle: ['James', 'Oliver'] }
 
@@ -53,5 +53,28 @@ describe('combinations', () => {
   })
   it('leaves other first names unaffected, in middle-list order', () => {
     expect(combinations(fin, 'Oliver', 'Smith').map((c) => c.full)).toEqual(['Oliver Fin Smith', 'Oliver Noah Smith'])
+  })
+})
+
+describe('findMiddleOnly', () => {
+  const l: Lists = { first: ['Oliver'], middle: ["Finn O'Brien", 'Lee', 'Oliver'] }
+  it('finds a middle-only name by its page address', () => {
+    expect(findMiddleOnly(l, 'lee')).toBe('Lee')
+    expect(findMiddleOnly(l, 'finn-obrien')).toBe("Finn O'Brien")
+  })
+  it('ignores first names and unknown addresses', () => {
+    expect(findMiddleOnly(l, 'oliver')).toBeUndefined()
+    expect(findMiddleOnly(l, 'nope')).toBeUndefined()
+  })
+})
+
+describe('nameFromSlug', () => {
+  it('turns a page address back into a readable name', () => {
+    expect(nameFromSlug('olivr')).toBe('Olivr')
+    expect(nameFromSlug('mary-ann')).toBe('Mary Ann')
+    expect(nameFromSlug('jean-luc-paul')).toBe('Jean Luc Paul')
+  })
+  it('ignores stray dashes', () => {
+    expect(nameFromSlug('-noah--')).toBe('Noah')
   })
 })

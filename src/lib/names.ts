@@ -18,3 +18,14 @@ export const combinations = (lists: Lists, first: string, surname: string) =>
   lists.middle
     .filter((middle) => middle.toLowerCase() !== first.toLowerCase())
     .map((middle) => ({ first, middle, surname, full: `${first} ${middle} ${surname}` }))
+
+/** The middle-only name whose page address would be `slug`, if any. */
+export const findMiddleOnly = (lists: Lists, slug: string) => middleOnly(lists).find((n) => slugify(n) === slug)
+
+/** A readable guess at the name behind a page address ("mary-ann" → "Mary Ann"); accents and apostrophes are lost. */
+export const nameFromSlug = (slug: string) =>
+  slug
+    .split('-')
+    .filter(Boolean)
+    .map((w) => w[0].toUpperCase() + w.slice(1))
+    .join(' ')

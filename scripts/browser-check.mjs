@@ -413,6 +413,19 @@ async function suite({ send, page }, scheme) {
   check('failed upgrade shows the clash message', await until(`(document.querySelector('details.row-menu[open] [role=alert]')?.textContent ?? '').includes('clashes with Mary-Ann')`))
   check('failed upgrade keeps the menu open', await js(`!!document.querySelector('details.row-menu[open]')`))
 
+  // Not-found page: offer the fix that makes the page exist, then become that page in place.
+  await seed(two, '/boys/edward')
+  check('middle-only address explains itself', await until(`document.querySelector('main').innerText.includes('Edward is a middle name only')`))
+  await shot('not-found-middle-only')
+  await clickEl(`document.querySelector('[aria-label="Make Edward a first name"]')`)
+  check('making it a first name turns the page into its page', await until(`document.querySelector('article > header hgroup h2')?.textContent === 'Edward'`))
+  await goto('/boys/noah')
+  check('unknown name: add form prefilled from the address', await until(`document.querySelector('main form input')?.value === 'Noah'`))
+  await shot('not-found-add')
+  await clickEl(button('main', 'Add name'))
+  check('adding it turns the page into its page', await until(`document.querySelector('article > header hgroup h2')?.textContent === 'Noah'`))
+  check('the title follows', await until(`document.title === 'Noah · Baby Names'`))
+
   check('no native browser pop-ups were used', page.nativeDialogs === 0, String(page.nativeDialogs))
   return results
 }

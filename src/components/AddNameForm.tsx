@@ -4,8 +4,8 @@ import { addName } from '../lib/rules'
 import type { CategoryId, Role } from '../lib/rules'
 import { store } from '../lib/store'
 
-export default function AddNameForm({ category }: { category: CategoryId }) {
-  const [value, setValue] = useState('')
+export default function AddNameForm({ category, initialName = '' }: { category: CategoryId; initialName?: string }) {
+  const [value, setValue] = useState(initialName)
   const [role, setRole] = useState<Role>('both')
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')

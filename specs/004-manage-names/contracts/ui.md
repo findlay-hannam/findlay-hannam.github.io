@@ -56,3 +56,15 @@ Key `baby-names:v1`, shape as in [data-model.md](../data-model.md), unchanged.
 - `src/app.css` maps three palettes onto Pico's CSS variables: baby blue (boys), baby pink (girls), warm cream (home, not-found). Page background tinted, content in a white rounded card with a solid accent header band, pill-shaped buttons, system rounded font stack (no web fonts). Every text/background pair is at least 4.5:1.
 - Nav links are colour-coded pills by destination: Boys blue, Girls pink, Set Last Name cream (`pill pill-boys|pill-girls|pill-home`).
 - Dark mode follows the device setting (`prefers-color-scheme`): each section switches to a deep palette (navy, plum, warm brown) with lifted pastel accents; Pico's own controls follow because `index.html` no longer forces `data-theme="light"`. Every text/background pair is at least 4.5:1 in both modes.
+
+## `/<category>/<slug>` (no such first name) — added after 004
+
+"Name not found", then the one fix that makes the page exist:
+
+| Case | Content |
+|---|---|
+| `slug` matches a middle-only name | "{Name} is a middle name only, so it has no page of its own." and a **Make {Name} a first name** button; the page becomes that name's page in place |
+| otherwise, last name set | "{Guess} isn’t in the {category} names yet." and the add form prefilled with the guess from the address (`mary-ann` → "Mary Ann"; accents and apostrophes cannot be recovered, so it stays editable). Adding it as first and middle turns the page into its page |
+| otherwise, no last name | "{Guess} isn’t in the {category} names yet. Set your last name to add it." (no form, as adding is gated on a last name) |
+
+An address with no letters reads "That name". Typo suggestions and "it's in the other category" are deliberately not offered: they only matter when editing addresses by hand.

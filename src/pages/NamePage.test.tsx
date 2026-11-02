@@ -129,6 +129,35 @@ describe('/<category>/<slug>', () => {
     })
   })
 
+  describe('a more useful not-found page', () => {
+    // fixture boys: first Arthur, Oliver; middle-only Edward, James
+    it('explains a middle-only name and offers to make it a first name', () => {
+      const html = page('/boys/edward')
+      expect(html).toContain('Name not found')
+      expect(html).toContain('Edward is a middle name only, so it has no page of its own.')
+      expect(html).toMatch(/<button[^>]*aria-label="Make Edward a first name"[^>]*>Make Edward a first name<\/button>/)
+      expect(html).not.toContain('<form')
+    })
+
+    it('offers to add an unknown name, prefilled from the address', () => {
+      const html = page('/boys/mary-ann')
+      expect(html).toContain('Mary Ann isn’t in the boys names yet.')
+      expect(html).toMatch(/<input[^>]*aria-label="Name"[^>]*value="Mary Ann"/)
+      expect(html).toContain('>Add name</button>')
+    })
+
+    it('falls back to "That name" when the address has no letters', () => {
+      expect(page('/boys/---')).toContain('That name isn’t in the boys names yet.')
+    })
+
+    it('without a last name, says to set one instead of showing the form', () => {
+      seed({ ...fixture, surname: undefined })
+      const html = page('/boys/noah')
+      expect(html).toContain('Noah isn’t in the boys names yet. Set your last name to add it.')
+      expect(html).not.toContain('<form')
+    })
+  })
+
   describe('heading count and combination cards (suggestion 9)', () => {
     it('shows the name with its combination count in the heading', () => {
       const html = renderAt('/boys/oliver')

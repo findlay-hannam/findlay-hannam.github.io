@@ -1,9 +1,10 @@
 import { useLocation } from 'wouter'
 import DeleteButton from '../components/DeleteButton'
+import AddNameForm from '../components/AddNameForm'
 import MoveButton from '../components/MoveButton'
 import RowMenu from '../components/RowMenu'
 import SurnameForm from '../components/SurnameForm'
-import { combinations, findName } from '../lib/names'
+import { combinations, findMiddleOnly, findName, nameFromSlug } from '../lib/names'
 import type { CategoryId, Stored } from '../lib/rules'
 import { useNames } from '../lib/store'
 
@@ -17,10 +18,29 @@ export default function NamePage({ category, slug, names }: Props) {
   const lists = data[category]
   const found = findName(lists, slug)
   if (!found) {
+    // Say what was looked for, and offer the one fix that makes the page exist.
+    const middle = findMiddleOnly(lists, slug)
+    const guess = nameFromSlug(slug)
+    const who = guess || 'That name'
     return (
       <article>
         <title>Name not found · Baby Names</title>
         <h2>Name not found</h2>
+        {middle !== undefined ? (
+          <>
+            <p>{`${middle} is a middle name only, so it has no page of its own.`}</p>
+            <p>
+              <MoveButton category={category} name={middle} to="first" label={`Make ${middle} a first name`} />
+            </p>
+          </>
+        ) : surname === undefined ? (
+          <p>{`${who} isn’t in the ${category} names yet. Set your last name to add it.`}</p>
+        ) : (
+          <>
+            <p>{`${who} isn’t in the ${category} names yet.`}</p>
+            <AddNameForm category={category} initialName={guess} />
+          </>
+        )}
       </article>
     )
   }
