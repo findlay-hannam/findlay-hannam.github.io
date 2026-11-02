@@ -15,7 +15,7 @@ describe('routes', () => {
       expect(navItems(html)).toEqual([
         { tag: 'a', href: '/boys', text: 'Boys' },
         { tag: 'a', href: '/girls', text: 'Girls' },
-        { tag: 'button', text: 'Set Last Name' },
+        { tag: 'button', text: 'Last name: Hannam' },
       ])
       expect(navHtml(html)).toContain('<button type="button"')
       expect(navHtml(html)).toContain('aria-haspopup="dialog"')
@@ -25,22 +25,42 @@ describe('routes', () => {
 
     it('has no site title or tagline above the nav (more room for content)', () => {
       const html = renderAt('/')
-      const aboveMain = html.slice(0, html.indexOf('<main'))
+      const aboveMain = html.slice(0, html.indexOf('<main')).replace(/<title>[\s\S]*?<\/title>/g, '')
       expect(aboveMain).not.toContain('<h1')
       expect(aboveMain).not.toContain('<hgroup')
       expect(aboveMain).not.toContain('Baby Names')
       expect(aboveMain).not.toContain('Combine, organise')
     })
 
-    it('is identical on every page', () => {
-      const first = navHtml(renderAt(paths[0]))
-      for (const path of paths) expect(navHtml(renderAt(path))).toBe(first)
+    it('is identical on every page apart from which pill is marked current', () => {
+      const bare = (path: string) => navHtml(renderAt(path)).replace(/ aria-current="[^"]*"/g, '')
+      const first = bare(paths[0])
+      for (const path of paths) expect(bare(path)).toBe(first)
     })
 
-    it('is identical with and without a last name set', () => {
-      const set = navHtml(renderAt('/'))
+    it.each([
+      ['/boys', 'Boys', 'page'],
+      ['/Boys/', 'Boys', 'page'],
+      ['/boys/oliver', 'Boys', 'true'],
+      ['/girls', 'Girls', 'page'],
+      ['/girls/ada', 'Girls', 'true'],
+    ])('%s marks the %s pill as current (%s) and no other', (path, label, value) => {
+      const tags = navHtml(renderAt(path)).match(/<a\b[^>]*>[^<]*<\/a>/g) ?? []
+      const current = tags.filter((t) => t.includes('aria-current'))
+      expect(current).toHaveLength(1)
+      expect(current[0]).toContain(`aria-current="${value}"`)
+      expect(current[0]).toContain(`>${label}<`)
+    })
+
+    it.each(['/', '/nope'])('%s marks no pill as current', (path) => {
+      expect(navHtml(renderAt(path))).not.toContain('aria-current')
+    })
+
+    it('shows the saved last name on the button, or "Set Last Name" when none (suggestion 7)', () => {
+      expect(navItems(renderAt('/boys'))[2]).toEqual({ tag: 'button', text: 'Last name: Hannam' })
       resetStore()
-      expect(navHtml(renderAt('/'))).toBe(set)
+      expect(navItems(renderAt('/boys'))[2]).toEqual({ tag: 'button', text: 'Set Last Name' })
+      expect(navHtml(renderAt('/boys'))).not.toContain('undefined')
     })
   })
 
@@ -65,6 +85,20 @@ describe('routes', () => {
       expect(tags[0]).toContain('pill-boys')
       expect(tags[1]).toContain('pill-girls')
       expect(tags[2]).toContain('pill-home')
+    })
+  })
+
+  describe('page titles (suggestion 10)', () => {
+    it.each([
+      ['/', 'Baby Names'],
+      ['/boys', 'Boys names · Baby Names'],
+      ['/girls', 'Girls names · Baby Names'],
+      ['/boys/oliver', 'Oliver · Baby Names'],
+      ['/boys/nope', 'Name not found · Baby Names'],
+      ['/nope', 'Page not found · Baby Names'],
+    ])('%s is titled "%s"', (path, title) => {
+      const titles = renderAt(path).match(/<title>([\s\S]*?)<\/title>/g) ?? []
+      expect(titles).toEqual([`<title>${title}</title>`])
     })
   })
 

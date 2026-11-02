@@ -17,7 +17,8 @@ export default function AddNameForm({ category }: { category: CategoryId }) {
     setError('')
     setValue('')
     setRole('both')
-    setNotice(store.save(r.value) ? '' : 'Saved for this visit only. Browser storage is unavailable.')
+    const added = `Added ${value.trim()} as ${role === 'both' ? 'a first and middle name' : 'a middle name only'}.`
+    setNotice(store.save(r.value) ? added : 'Saved for this visit only. Browser storage is unavailable.')
   }
 
   return (
@@ -27,7 +28,10 @@ export default function AddNameForm({ category }: { category: CategoryId }) {
           aria-label="Name"
           placeholder="Name"
           value={value}
-          onChange={(e) => setValue(e.target.value)}
+          onChange={(e) => {
+            setValue(e.target.value)
+            setNotice('')
+          }}
           aria-invalid={error ? true : undefined}
         />
         <select aria-label="Use as" value={role} onChange={(e) => setRole(e.target.value === 'middle' ? 'middle' : 'both')}>

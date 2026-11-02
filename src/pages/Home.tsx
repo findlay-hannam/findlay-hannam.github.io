@@ -1,6 +1,7 @@
 export default function Home() {
   return (
     <article>
+      <title>Baby Names</title>
       <header>
         <h1>Baby Names</h1>
       </header>

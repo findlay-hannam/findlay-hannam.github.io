@@ -10,7 +10,7 @@ Page routes unchanged except `/` ([001](../../001-name-routing/contracts/routes.
 |---|---|---|---|
 | 1 | Boys | `<a href="/boys" class="pill pill-boys">` | navigates |
 | 2 | Girls | `<a href="/girls" class="pill pill-girls">` | navigates |
-| 3 | Set Last Name | `<button type="button" class="pill pill-home" aria-haspopup="dialog">` | opens the modal; no navigation |
+| 3 | "Set Last Name", or "Last name: {saved}" once one is saved (truncated with an ellipsis if long) | `<button type="button" class="pill pill-home" aria-haspopup="dialog">` | opens the modal; no navigation |
 
 ## Modal (rendered only while open)
 
@@ -46,3 +46,5 @@ While open the page behind is inert. Modal colours follow the current section (`
 
 - In-page last-name prompts on category and name pages with no last name (002).
 - All other pages and their controls.
+
+> After 005: the dialog shell is shared as `src/components/Modal.tsx` (also used by the delete confirmation); behaviour unchanged.

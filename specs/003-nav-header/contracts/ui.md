@@ -32,3 +32,5 @@ Routes are unchanged from [001](../../001-name-routing/contracts/routes.md); pag
 "Surname" → "Last name": form label, button ("Save last name"), `/` lead-in and status line, and validation messages ("Enter a last name.", "Last name must be 50 characters or fewer.").
 
 > Amended after 003: the "Baby Names / Combine, organise and list names." heading is removed, the header holds only the nav, and the nav is centred (`src/app.css`). `index.html` keeps `<title>Baby Names</title>`.
+
+> Amended after 005: the pill for the section you are in carries `aria-current` (`page` on its list, `true` on one of its name pages) and a ring; the nav is otherwise identical on every page. Every page sets its own `<title>` (e.g. "Boys names · Baby Names", "Oliver · Baby Names").

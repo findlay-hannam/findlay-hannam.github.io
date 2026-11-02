@@ -82,7 +82,11 @@
 
 .app article {
   border-radius: 1.5rem;
-  overflow: hidden;
+}
+
+/* Round the header band itself (not overflow: hidden on the card, which would clip row menus). */
+.app article > header {
+  border-radius: 1.5rem 1.5rem 0 0;
 }
 
 /* A solid accent band as the card header. */
@@ -150,19 +154,129 @@ header nav button.pill:focus-visible {
   --pill-ink: #4a2a0a;
 }
 
-/* Name rows: the name (or link) first, then small secondary buttons beside it. */
-.name-row {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.25rem 0.75rem;
+/* Name lists: each name is a calm, full-width row; actions live behind one "⋯" menu. */
+.name-list {
+  padding: 0;
 }
 
-.name-row button {
+.name-list > li {
+  list-style: none;
+  margin-bottom: 0.5rem;
+}
+
+.name-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.name-link,
+.name-text {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 2.75rem;
+  padding: 0.5rem 1rem;
+  border-radius: 1rem;
+  background-color: color-mix(in srgb, var(--accent) 30%, #fff);
+}
+
+.app .name-link {
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.app .name-link:hover,
+.app .name-link:focus-visible {
+  background-color: var(--accent);
+  color: var(--accent-ink);
+}
+
+.name-link > small {
+  margin-left: auto;
+  color: var(--outline);
+}
+
+.name-link > span[aria-hidden] {
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+/* The "⋯" menu: a round 44px target that opens a small card of actions. */
+.app .row-menu {
+  position: relative;
+  margin: 0;
+}
+
+.app .row-menu > summary {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  margin: 0;
+  border-radius: 999px;
+  font-size: 1.25rem;
+  line-height: 1;
+  list-style: none;
+  cursor: pointer;
+}
+
+.app .row-menu > summary::-webkit-details-marker,
+.app .row-menu > summary::after {
+  display: none;
+}
+
+.app .row-menu > summary:hover,
+.app .row-menu[open] > summary {
+  background-color: var(--accent);
+}
+
+.row-menu-items {
+  position: absolute;
+  top: calc(100% + 0.25rem);
+  right: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 13rem;
+  padding: 0.5rem;
+  border-radius: 1rem;
+  background-color: #fff;
+  box-shadow: var(--pico-card-box-shadow);
+}
+
+.app .row-menu-items button {
+  width: 100%;
+  min-height: 2.75rem;
+  margin: 0;
+  padding: 0.5rem 0.9rem;
+  font-size: 0.9rem;
+  text-align: left;
+}
+
+/* Lone buttons in a row (Delete on a name page): small, but a comfortable tap target on phones. */
+.name-row > button {
   width: auto;
   margin: 0;
   padding: 0.125rem 0.625rem;
   font-size: 0.75rem;
+}
+
+@media (max-width: 576px) {
+  .name-row > button {
+    min-height: 2.75rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
+}
+
+/* A long last name on the header button is truncated rather than breaking the nav. */
+header nav button.pill {
+  max-width: 16rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* Add-name form: input, role dropdown and button on one compact row. */
@@ -193,7 +307,57 @@ header nav button.pill:focus-visible {
 }
 
 /* Form messages (errors, notices) get their own line instead of sitting inline with the buttons. */
+.app .add-row + small {
+  margin-top: 0.5rem;
+}
+
 .app form > small {
   display: block;
   margin-bottom: 0.75rem;
+}
+
+/* Name page: count under the name in the header band; combinations as soft cards. */
+.app article > header hgroup {
+  margin: 0;
+}
+
+.app article > header hgroup > p {
+  margin: 0.25rem 0 0;
+  color: var(--accent-ink);
+  font-size: 0.95rem;
+}
+
+.combo-list {
+  padding: 0;
+}
+
+.combo-list > li {
+  list-style: none;
+  margin-bottom: 0.5rem;
+  padding: 0.6rem 1rem;
+  border-radius: 1rem;
+  background-color: color-mix(in srgb, var(--accent) 30%, #fff);
+}
+
+.combo-list strong {
+  color: var(--heading);
+  font-weight: 700;
+}
+
+/* Current section: a ring around its pill. */
+header nav a.pill[aria-current] {
+  box-shadow:
+    0 0 0 2px var(--page),
+    0 0 0 4px var(--pill-ink);
+}
+
+/* Dialog actions (delete confirmation): side by side. */
+.app .dialog-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.app .dialog-actions > button {
+  width: auto;
+  margin: 0;
 }

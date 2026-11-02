@@ -17,24 +17,33 @@ export default function NamePage({ category, slug, names }: Props) {
   if (!found) {
     return (
       <article>
+        <title>Name not found · Baby Names</title>
         <h2>Name not found</h2>
       </article>
     )
   }
+  const count = combinations(lists, found.name, '').length
+  const countLabel = count === 0 ? 'No combinations yet' : `${count} combination${count === 1 ? '' : 's'}`
   const combos = surname === undefined ? undefined : combinations(lists, found.name, surname)
   return (
     <article>
+      <title>{`${found.name} · Baby Names`}</title>
       <header>
-        <h2>{found.name}</h2>
+        <hgroup>
+          <h2>{found.name}</h2>
+          <p>{countLabel}</p>
+        </hgroup>
       </header>
       {combos === undefined ? (
         <SurnameForm />
       ) : combos.length === 0 ? (
-        <p>No combinations yet.</p>
+        <p>{`Add more middle names to the ${category} list to see full names.`}</p>
       ) : (
-        <ul>
+        <ul className="combo-list">
           {combos.map((c) => (
-            <li key={c.middle}>{c.full}</li>
+            <li key={c.middle}>
+              {c.first} <strong>{c.middle}</strong> {c.surname}
+            </li>
           ))}
         </ul>
       )}
