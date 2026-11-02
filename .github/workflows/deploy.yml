@@ -20,6 +20,8 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm test
       - run: pnpm build
+      # Real headless Chrome (preinstalled on ubuntu-latest) against the build: dialogs, menus, focus, layout.
+      - run: pnpm check:browser
       - uses: actions/upload-pages-artifact@v3
         with: { path: dist }
   deploy:
