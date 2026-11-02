@@ -13,6 +13,7 @@ export default function CategoryList({ category, names }: { category: CategoryId
   const lists = data[category]
   const first = firstNames(lists)
   const middle = middleOnly(lists)
+  const label = (name: string) => (data.surname === undefined ? name : `${name} ${data.surname}`)
   return (
     <article>
       <header>
@@ -22,11 +23,12 @@ export default function CategoryList({ category, names }: { category: CategoryId
       {first.length === 0 && middle.length === 0 && <p>No names yet.</p>}
       {first.length > 0 && (
         <>
-          <h3>First and middle names</h3>
+          <h3>First names (Click to see with middle names)</h3>
           <ul>
             {first.map(({ name, slug }) => (
-              <li key={slug}>
-                <Link href={`/${category}/${slug}`}>{name}</Link> <MoveButton category={category} name={name} to="middle" />{' '}
+              <li key={slug} className="name-row">
+                <Link href={`/${category}/${slug}`}>{label(name)}</Link>
+                <MoveButton category={category} name={name} to="middle" />
                 <DeleteButton category={category} name={name} />
               </li>
             ))}
@@ -38,8 +40,9 @@ export default function CategoryList({ category, names }: { category: CategoryId
           <h3>Middle names only</h3>
           <ul>
             {middle.map((name) => (
-              <li key={name}>
-                {name} <MoveButton category={category} name={name} to="first" />{' '}
+              <li key={name} className="name-row">
+                <span>{name}</span>
+                <MoveButton category={category} name={name} to="first" />
                 <DeleteButton category={category} name={name} />
               </li>
             ))}

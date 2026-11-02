@@ -10,10 +10,11 @@ Routes and header unchanged ([001](../../001-name-routing/contracts/routes.md), 
 
 | Group heading | Item content | Controls per item |
 |---|---|---|
-| "First and middle names" | name as a link to `/<category>/<slug>` | **Make middle only**, **Delete** |
+| "First names (Click to see with middle names)" | link to `/<category>/<slug>` reading "{First} {Last name}" (just "{First}" when no last name is set) | **Make middle only**, **Delete** |
 | "Middle names only" | name as plain text (no link) | **Make first and middle**, **Delete** |
 
 - Controls appear whether or not a last name is set.
+- Each item is one flex row (`li.name-row`): the name or link first, then the buttons beside it, left aligned, in a small secondary style (`src/app.css`).
 
 ## Controls
 

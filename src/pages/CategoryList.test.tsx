@@ -12,7 +12,7 @@ describe('/boys and /girls', () => {
   it('lists only boys names on /boys, as links in a list', () => {
     const html = renderAt('/boys')
     expect(html).toContain('<ul')
-    for (const n of fixture.boys.first) expect(html).toContain(`>${n.replace("'", '&#x27;')}</a>`)
+    for (const n of fixture.boys.first) expect(html).toContain(`>${n.replace("'", '&#x27;')} Hannam</a>`)
     expect(html).toContain('href="/boys/oliver"')
     for (const n of fixture.girls.first) expect(html).not.toContain(n)
   })
@@ -107,13 +107,31 @@ describe('/boys and /girls', () => {
 
     it('shows first-and-middle names as links and middle-only names as plain text, alphabetically', () => {
       const main = mainHtml(renderAt('/boys'))
-      expect(main).toContain('First and middle names')
+      expect(main).toContain('First names (Click to see with middle names)')
       expect(main).toContain('Middle names only')
       expect(main.indexOf('href="/boys/arthur"')).toBeLessThan(main.indexOf('href="/boys/oliver"'))
+      expect(main).toContain('>arthur Hannam</a>')
+      expect(main).toContain('>Oliver Hannam</a>')
       expect(main.indexOf('>James<')).toBeLessThan(main.indexOf('>lee<'))
       expect(main).not.toContain('href="/boys/lee"')
       expect(main).not.toContain('href="/boys/james"')
-      expect((main.match(/>arthur</g) ?? []).length).toBe(1)
+      expect((main.match(/>arthur/g) ?? []).length).toBe(1)
+    })
+
+    it('reads "First Last" when a last name is set, and just the first name when not', () => {
+      expect(mainHtml(renderAt('/boys'))).toContain('>Oliver Hannam</a>')
+      seed({ ...groups, surname: undefined })
+      const main = mainHtml(renderAt('/boys'))
+      expect(main).toContain('>Oliver</a>')
+      expect(main).not.toContain('undefined')
+    })
+
+    it('puts the link and its buttons in one flex row, link first (layout hook)', () => {
+      const main = mainHtml(renderAt('/boys'))
+      expect(main).toMatch(
+        /<li class="name-row"><a href="\/boys\/arthur">arthur Hannam<\/a><button[^>]*aria-label="Make middle only: arthur"[^>]*>Make middle only<\/button><button[^>]*aria-label="Delete arthur"/,
+      )
+      expect(main).toMatch(/<li class="name-row"><span>James<\/span><button[^>]*aria-label="Make first and middle: James"/)
     })
 
     it.each(['arthur', 'Oliver', 'James', 'lee'])('has a delete button for %s', (name) => {
@@ -134,14 +152,14 @@ describe('/boys and /girls', () => {
       seed({ ...emptyStored, surname: 'Hannam' })
       const main = mainHtml(renderAt('/boys'))
       expect(main).toContain('No names yet.')
-      expect(main).not.toContain('First and middle names')
+      expect(main).not.toContain('First names (Click')
       expect(main).not.toContain('Middle names only')
     })
 
     it('omits the middle-only heading when there are no middle-only names', () => {
       seed({ ...emptyStored, surname: 'Hannam', boys: { first: ['Noah'], middle: ['Noah'] } })
       const main = mainHtml(renderAt('/boys'))
-      expect(main).toContain('First and middle names')
+      expect(main).toContain('First names (Click to see with middle names)')
       expect(main).not.toContain('Middle names only')
     })
 

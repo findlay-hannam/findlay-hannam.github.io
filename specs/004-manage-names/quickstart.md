@@ -22,7 +22,7 @@ Run `pnpm dev`, open the printed URL in a fresh private window. Set last name "S
 |---|---|---|
 | 1 | Open `/boys` | "No names yet."; add form with "First and middle name" selected; no sample names |
 | 2 | Open `/boys/oliver` | "Name not found" |
-| 3 | Add "Noah" without touching the radios | Appears under "First and middle names" as a link |
+| 3 | Add "Noah" without touching the radios | Appears under "First names (Click to see with middle names)" as a link |
 | 4 | Select "Middle name only", add "Lee", then look at the form | "Lee" appears under "Middle names only" (not a link); form is back on "First and middle name" |
 | 5 | Add "Ada", "noah" | "Ada" listed before "Noah" (alphabetical); "noah" rejected as already existing, typed text and radio unchanged |
 | 6 | Open `/boys/noah` | Combinations "Noah Ada Smith", "Noah Lee Smith" in that order; no "Noah Noah Smith" |

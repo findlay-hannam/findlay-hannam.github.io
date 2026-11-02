@@ -9,10 +9,6 @@ function App() {
   return (
     <>
       <header className="container">
-        <hgroup>
-          <h1>Baby Names</h1>
-          <p>Combine, organise and list names.</p>
-        </hgroup>
         <nav aria-label="Main">
           <ul>
             <li>

@@ -21,6 +21,14 @@ describe('routes', () => {
       expect(html.indexOf('<nav')).toBeLessThan(html.indexOf('<main'))
     })
 
+    it('has no site title or tagline above the nav (more room for content)', () => {
+      const html = renderAt('/')
+      expect(html).not.toContain('<h1')
+      expect(html).not.toContain('<hgroup')
+      expect(html).not.toContain('Baby Names')
+      expect(html).not.toContain('Combine, organise')
+    })
+
     it('is identical on every page', () => {
       const first = navHtml(renderAt(paths[0]))
       for (const path of paths) expect(navHtml(renderAt(path))).toBe(first)

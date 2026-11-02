@@ -1,0 +1,23 @@
+/* Name rows: the name (or link) first, then small secondary buttons beside it. */
+.name-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 0.75rem;
+}
+
+.name-row button {
+  width: auto;
+  margin: 0;
+  padding: 0.125rem 0.5rem;
+  font-size: 0.75rem;
+}
+
+/* Centre the main navigation. Pico offsets the first and last <ul> with negative margins; clear them. */
+header nav {
+  justify-content: center;
+}
+
+header nav ul:first-of-type {
+  margin-inline: 0;
+}

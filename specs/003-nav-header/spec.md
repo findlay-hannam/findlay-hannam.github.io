@@ -96,7 +96,7 @@ Navigation links that sit with or below page content are removed, so the header 
 ## Assumptions
 
 - This amends 001: the landing page's "Boys and Girls" links (001 FR-008) and the not-found and back links (001 FR-005, User Story 2 scenario 2) are replaced by the header.
-- The site title stays as a heading in the page header and is not a fourth navigation option.
+- The site title stays as a heading in the page header and is not a fourth navigation option. (Superseded: the title and tagline were later removed to save space; the header holds only the centred nav.)
 - The in-page last-name prompts from 002 (category and name pages with no last name set) are forms, not navigation, and stay.
 - `/` is the last-name page. 002's FR-001 (prompt on `/`) still holds unchanged; 001's FR-008 (landing page linking to Boys and Girls) is replaced by the header.
 - The Set Last Name label is fixed; it does not change to "Change Last Name" once a last name exists.
