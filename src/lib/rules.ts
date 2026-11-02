@@ -31,9 +31,9 @@ const MAX = 50
 
 export function clean(raw: string, label: 'surname' | 'name'): Result<string> {
   const value = raw.trim()
-  const Label = label === 'surname' ? 'Surname' : 'Name'
-  if (value === '') return { ok: false, error: `Enter a ${label}.` }
-  if (value.length > MAX) return { ok: false, error: `${Label} must be ${MAX} characters or fewer.` }
+  const noun = label === 'surname' ? 'last name' : 'name'
+  if (value === '') return { ok: false, error: `Enter a ${noun}.` }
+  if (value.length > MAX) return { ok: false, error: `${noun[0].toUpperCase()}${noun.slice(1)} must be ${MAX} characters or fewer.` }
   return { ok: true, value }
 }
 

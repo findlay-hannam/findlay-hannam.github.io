@@ -1,4 +1,3 @@
-import { Link } from 'wouter'
 import SurnameForm from '../components/SurnameForm'
 import type { CategoryId } from '../data/config'
 import { combinations, findName } from '../lib/names'
@@ -15,9 +14,6 @@ export default function NamePage({ category, slug, names }: Props) {
     return (
       <article>
         <h2>Name not found</h2>
-        <p>
-          <Link href={`/${category}`}>Back to the {category} list</Link>
-        </p>
       </article>
     )
   }
@@ -38,9 +34,6 @@ export default function NamePage({ category, slug, names }: Props) {
           ))}
         </ul>
       )}
-      <footer>
-        <Link href={`/${category}`}>Back to the {category} list</Link>
-      </footer>
     </article>
   )
 }

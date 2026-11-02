@@ -53,11 +53,11 @@ describe('clean', () => {
     expect(clean("  Zoë  O'Brien ", 'name')).toEqual({ ok: true, value: "Zoë  O'Brien" })
   })
   it.each(['', '   '])('rejects empty %j with a label-specific message', (raw) => {
-    expect(clean(raw, 'surname')).toEqual({ ok: false, error: 'Enter a surname.' })
+    expect(clean(raw, 'surname')).toEqual({ ok: false, error: 'Enter a last name.' })
     expect(clean(raw, 'name')).toEqual({ ok: false, error: 'Enter a name.' })
   })
   it('rejects over 50 characters, accepts exactly 50', () => {
-    expect(clean('a'.repeat(51), 'surname')).toEqual({ ok: false, error: 'Surname must be 50 characters or fewer.' })
+    expect(clean('a'.repeat(51), 'surname')).toEqual({ ok: false, error: 'Last name must be 50 characters or fewer.' })
     expect(clean('a'.repeat(51), 'name')).toEqual({ ok: false, error: 'Name must be 50 characters or fewer.' })
     expect(clean('a'.repeat(50), 'name').ok).toBe(true)
   })
@@ -74,7 +74,7 @@ describe('setSurname', () => {
     expect(r.ok && r.value.surname).toBe('Smith')
   })
   it('rejects empty and over-long input', () => {
-    expect(setSurname(emptyStored, ' ')).toEqual({ ok: false, error: 'Enter a surname.' })
+    expect(setSurname(emptyStored, ' ')).toEqual({ ok: false, error: 'Enter a last name.' })
     expect(setSurname(emptyStored, 'a'.repeat(51)).ok).toBe(false)
   })
   it('does not mutate its input', () => {

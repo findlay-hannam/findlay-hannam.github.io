@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { config } from '../data/config'
 import type { Names } from '../lib/rules'
 import { emptyStored } from '../lib/rules'
-import { renderAt, resetStore, seed } from '../test/renderAt'
+import { mainHtml, renderAt, resetStore, seed } from '../test/renderAt'
 import CategoryList from './CategoryList'
 
 describe('/boys and /girls', () => {
@@ -16,6 +16,13 @@ describe('/boys and /girls', () => {
     for (const n of config.boys.first) expect(html).toContain(`>${n.replace("'", '&#x27;')}</a>`)
     expect(html).toContain('href="/boys/oliver"')
     for (const n of config.girls.first) expect(html).not.toContain(n)
+  })
+
+  it('keeps one content link per listed name (FR-008)', () => {
+    const main = mainHtml(renderAt('/boys'))
+    const anchors = main.match(/<a /g) ?? []
+    expect(anchors).toHaveLength(config.boys.first.length)
+    expect(main).toContain('href="/boys/oliver"')
   })
 
   it('lists only girls names on /girls', () => {
@@ -62,9 +69,9 @@ describe('/boys and /girls', () => {
   describe('with no surname set', () => {
     beforeEach(resetStore)
 
-    it('shows the surname prompt instead of the add-name form, and still lists names', () => {
+    it('shows the last name prompt instead of the add-name form, and still lists names', () => {
       const html = renderAt('/girls')
-      expect(html).toContain('Save surname')
+      expect(html).toContain('Save last name')
       expect(html).not.toContain('Add name')
       expect(html).toContain('href="/girls/ada"')
     })
@@ -73,7 +80,7 @@ describe('/boys and /girls', () => {
       seed({ ...emptyStored, surname: 'Hannam' })
       const html = renderAt('/girls')
       expect(html).toContain('Add name')
-      expect(html).not.toContain('Save surname')
+      expect(html).not.toContain('Save last name')
     })
   })
 })

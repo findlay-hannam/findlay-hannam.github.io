@@ -1,5 +1,7 @@
 # UI Contract: Name Input
 
+> Amended by 003-nav-header: visible wording is 'last name'; messages now read 'Enter a last name.' and 'Last name must be 50 characters or fewer.'
+
 Routes are unchanged from [001](../../001-name-routing/contracts/routes.md). This adds forms and stored data.
 
 ## Per-route content

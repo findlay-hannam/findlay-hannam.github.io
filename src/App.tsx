@@ -1,4 +1,4 @@
-import { Route, Switch } from 'wouter'
+import { Link, Route, Switch } from 'wouter'
 import { isCategory } from './lib/names'
 import CategoryList from './pages/CategoryList'
 import Home from './pages/Home'
@@ -13,6 +13,19 @@ function App() {
           <h1>Baby Names</h1>
           <p>Combine, organise and list names.</p>
         </hgroup>
+        <nav aria-label="Main">
+          <ul>
+            <li>
+              <Link href="/boys">Boys</Link>
+            </li>
+            <li>
+              <Link href="/girls">Girls</Link>
+            </li>
+            <li>
+              <Link href="/">Set Last Name</Link>
+            </li>
+          </ul>
+        </nav>
       </header>
       <main className="container">
         <Switch>

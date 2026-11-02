@@ -14,3 +14,13 @@ export const renderAt = (path: string) =>
       <App />
     </Router>,
   )
+
+// Test helpers for inspecting rendered markup.
+export const navCount = (html: string) => (html.match(/<nav\b/g) ?? []).length
+
+export const navHtml = (html: string) => html.match(/<nav\b[^>]*>[\s\S]*?<\/nav>/)?.[0] ?? ''
+
+export const navLinks = (html: string) =>
+  [...navHtml(html).matchAll(/<a\b[^>]*href="([^"]*)"[^>]*>([\s\S]*?)<\/a>/g)].map((m) => ({ href: m[1], text: m[2] }))
+
+export const mainHtml = (html: string) => html.match(/<main\b[^>]*>([\s\S]*)<\/main>/)?.[1] ?? ''

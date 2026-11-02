@@ -5,7 +5,7 @@ import { config } from '../data/config'
 import type { Names } from '../lib/rules'
 import { emptyStored } from '../lib/rules'
 import { slugify } from '../lib/slug'
-import { renderAt, resetStore, seed } from '../test/renderAt'
+import { mainHtml, renderAt, resetStore, seed } from '../test/renderAt'
 import NamePage from './NamePage'
 
 const esc = (s: string) => s.replace(/'/g, '&#x27;')
@@ -27,14 +27,17 @@ describe('/<category>/<slug>', () => {
     expect(html).not.toContain('James')
   })
 
-  it('shows not found with a link back to the list for an unknown slug', () => {
-    const html = renderAt('/boys/nope')
+  it.each(['/boys/nope', '/boys/ada'])('%s shows not found with no links in its content', (path) => {
+    const html = renderAt(path)
     expect(html).toContain('Name not found')
-    expect(html).toContain('href="/boys"')
+    expect(html).not.toContain('Back to the')
+    expect(mainHtml(html)).not.toContain('<a ')
   })
 
-  it('treats a slug from the other category as not found', () => {
-    expect(renderAt('/boys/ada')).toContain('Name not found')
+  it('a found name page has no back link and no anchors in its content (FR-007)', () => {
+    const html = renderAt('/boys/oliver')
+    expect(html).not.toContain('Back to the')
+    expect(mainHtml(html)).not.toContain('<a ')
   })
 
   it('shows an empty state when the category has no middle names', () => {
@@ -81,24 +84,23 @@ describe('/<category>/<slug>', () => {
   describe('with no surname set', () => {
     beforeEach(resetStore)
 
-    it('shows the surname prompt instead of combinations', () => {
+    it('shows the last name prompt instead of combinations', () => {
       const html = renderAt('/boys/oliver')
-      expect(html).toContain('Save surname')
+      expect(html).toContain('Save last name')
       expect(html).not.toContain('Oliver James')
-      expect(html).not.toContain('Set a surname to see combinations.')
     })
 
     it('shows combinations once a surname is saved', () => {
       seed({ ...emptyStored, surname: 'Hannam' })
       const html = renderAt('/boys/oliver')
       expect(html).toContain('Oliver James Hannam')
-      expect(html).not.toContain('Save surname')
+      expect(html).not.toContain('Save last name')
     })
 
     it('still shows not found for an unknown slug', () => {
       const html = renderAt('/boys/nope')
       expect(html).toContain('Name not found')
-      expect(html).not.toContain('Save surname')
+      expect(html).not.toContain('Save last name')
     })
   })
 

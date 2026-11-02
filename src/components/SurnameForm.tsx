@@ -20,12 +20,12 @@ export default function SurnameForm() {
   return (
     <form onSubmit={onSubmit}>
       <label>
-        Surname
+        Last name
         <input value={value} onChange={(e) => setValue(e.target.value)} aria-invalid={error ? true : undefined} />
       </label>
       {error && <small role="alert">{error}</small>}
       {notice && <small role="status">{notice}</small>}
-      <button type="submit">Save surname</button>
+      <button type="submit">Save last name</button>
     </form>
   )
 }
