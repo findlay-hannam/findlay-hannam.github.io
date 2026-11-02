@@ -1,14 +1,25 @@
 <!--
 Sync Impact Report
-- Version change: 1.1.0 → 1.1.1 (PATCH: npm → pnpm wording; earlier 1.0.0 → 1.1.0 added TDD)
-- Modified principles: III. Unit-Tested Logic → III. Test-First (TDD) (NON-NEGOTIABLE)
-- Added sections: none (TDD red-green-refactor requirement added to Principle III)
+- Version change: 1.1.1 → 1.2.0 (MINOR: new Purpose & Scope section)
+- Modified principles: none
+- Added sections: Purpose & Scope
 - Removed sections: none
 - Templates: plan-template.md ✅ no change (Constitution Check reads this file at plan time)
              spec-template.md ✅ no change; tasks-template.md ✅ updated (tests REQUIRED, not optional)
 - Deferred TODOs: none
 -->
 # Findlay Hannam Site Constitution
+
+## Purpose & Scope
+
+A site to combine, organise, and list baby names.
+- Every feature MUST serve combining names from multiple sources, organising them, or
+  listing them. Anything else is out of scope.
+- Out of scope unless this section is amended: user accounts, server-side storage, social
+  or sharing features that need a backend.
+
+Rationale: a stated purpose is what makes Principle I (Minimalism) checkable; plans MUST
+show which of combine, organise, or list each feature serves.
 
 ## Core Principles
 
@@ -83,4 +94,4 @@ commit that updates the Sync Impact Report, version, and Last Amended date.
   Principles I–V.
 - Single maintainer: amendments need no approval beyond the owner's commit.
 
-**Version**: 1.1.1 | **Ratified**: 2026-11-02 | **Last Amended**: 2026-11-02
+**Version**: 1.2.0 | **Ratified**: 2026-11-02 | **Last Amended**: 2026-11-02
