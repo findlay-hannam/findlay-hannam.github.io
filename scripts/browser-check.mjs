@@ -400,7 +400,7 @@ async function suite({ send, page }, scheme) {
   check("Edward's card no longer offers an upgrade", await until(`!${menuOf('Edward')}.querySelector('[aria-label^="Make first and middle"]')`))
   check('the action closes its menu', await until(`!${menuOf('Edward')}.open`))
   check("focus returns to the card's ⋯", await until(`document.activeElement === ${menuOf('Edward')}.querySelector('summary')`))
-  check('card text keeps its spaces', await js(`[...document.querySelectorAll('.combo-list .name-text')].some(e => e.innerText === 'Oliver Edward Hannam')`))
+  check('card text keeps its spaces', await js(`[...document.querySelectorAll('.combo-list .name-link > span:first-child')].some(e => e.innerText === 'Oliver Edward Hannam')`))
   await clickEl(`${menuOf('James')}.querySelector('summary')`)
   await clickEl(`${menuOf('James')}.querySelector('[aria-label="Delete James"]')`)
   check('delete from a card asks in the themed dialog', await until(`document.querySelector('dialog[open] #delete-title')?.textContent === 'Delete James?'`))
