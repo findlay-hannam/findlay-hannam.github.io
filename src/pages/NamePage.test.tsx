@@ -36,10 +36,11 @@ describe('/<category>/<slug>', () => {
     expect(mainHtml(html)).not.toContain('<a ')
   })
 
-  it('a found name page has no back link and no anchors in its content (FR-007)', () => {
+  it('a found name page has no back link; its only anchors drill into a second middle name (FR-007, amended)', () => {
     const html = page('/boys/oliver')
     expect(html).not.toContain('Back to the')
-    expect(mainHtml(html)).not.toContain('<a ')
+    const anchors = mainHtml(html).match(/<a [^>]*>/g) ?? []
+    for (const a of anchors) expect(a).toMatch(/href="\/boys\/oliver\/[a-z-]+"/)
   })
 
   it('shows an empty state when the category has no middle names', () => {
@@ -175,7 +176,7 @@ describe('/<category>/<slug>', () => {
       const html = renderAt('/boys/oliver')
       expect(html).toContain('<ul class="combo-list">')
       // the text sits in its own inline span so its spaces survive the flex row
-      expect(html).toMatch(/<li class="name-row"><span class="name-text"><span>Oliver(<!-- -->)? <strong>James<\/strong> (<!-- -->)?Hannam<\/span><\/span>/)
+      expect(html).toMatch(/<li class="name-row"><a href="\/boys\/oliver\/james" class="name-link"><span>Oliver(<!-- -->)? <strong>James<\/strong> (<!-- -->)?Hannam<\/span>/)
     })
   })
 

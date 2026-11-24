@@ -19,6 +19,13 @@ export const combinations = (lists: Lists, first: string, surname: string) =>
     .filter((middle) => middle.toLowerCase() !== first.toLowerCase())
     .map((middle) => ({ first, middle, surname, full: `${first} ${middle} ${surname}` }))
 
+/** Middle names that can follow `chain` (first name plus middles so far): anything not already in it. */
+export const nextMiddles = (lists: Lists, chain: string[]) =>
+  lists.middle.filter((m) => !chain.some((c) => c.toLowerCase() === m.toLowerCase()))
+
+/** The middle name behind a page address, if any (first names are middle names too). */
+export const findMiddle = (lists: Lists, slug: string) => lists.middle.find((n) => slugify(n) === slug)
+
 /** The middle-only name whose page address would be `slug`, if any. */
 export const findMiddleOnly = (lists: Lists, slug: string) => middleOnly(lists).find((n) => slugify(n) === slug)
 

@@ -1,10 +1,11 @@
-import { useLocation } from 'wouter'
+import { Link, useLocation } from 'wouter'
 import DeleteButton from '../components/DeleteButton'
 import AddNameForm from '../components/AddNameForm'
 import MoveButton from '../components/MoveButton'
 import RowMenu from '../components/RowMenu'
 import SurnameForm from '../components/SurnameForm'
 import { combinations, findMiddleOnly, findName, nameFromSlug } from '../lib/names'
+import { slugify } from '../lib/slug'
 import type { CategoryId, Stored } from '../lib/rules'
 import { useNames } from '../lib/store'
 
@@ -65,11 +66,12 @@ export default function NamePage({ category, slug, names }: Props) {
         <ul className="combo-list">
           {combos.map((c) => (
             <li key={c.middle} className="name-row">
-              <span className="name-text">
+              <Link href={`/${category}/${found.slug}/${slugify(c.middle)}`} className="name-link">
                 <span>
                   {c.first} <strong>{c.middle}</strong> {c.surname}
                 </span>
-              </span>
+                <span aria-hidden="true">›</span>
+              </Link>
               {/* Actions act on this card's middle name; only a middle-only name can be upgraded. */}
               <RowMenu name={c.middle}>
                 {!isFirst(c.middle) && <MoveButton category={category} name={c.middle} to="first" />}

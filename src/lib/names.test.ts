@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { Lists } from './rules'
-import { combinations, findMiddleOnly, findName, firstNames, middleOnly, nameFromSlug } from './names'
+import { combinations, findMiddle, findMiddleOnly, findName, firstNames, middleOnly, nameFromSlug, nextMiddles } from './names'
 
 const lists: Lists = { first: ['Oliver', "Finn O'Brien"], middle: ['James', 'Oliver'] }
 
@@ -76,5 +76,16 @@ describe('nameFromSlug', () => {
   })
   it('ignores stray dashes', () => {
     expect(nameFromSlug('-noah--')).toBe('Noah')
+  })
+})
+
+describe('nextMiddles / findMiddle', () => {
+  const l: Lists = { first: ['Oliver'], middle: ['James', 'Lee', 'Oliver'] }
+  it('excludes names already in the chain, ignoring case', () => {
+    expect(nextMiddles(l, ['Oliver', 'james'])).toEqual(['Lee'])
+  })
+  it('finds a middle name (including first names) by slug', () => {
+    expect(findMiddle(l, 'oliver')).toBe('Oliver')
+    expect(findMiddle(l, 'nope')).toBeUndefined()
   })
 })

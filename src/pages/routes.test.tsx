@@ -160,3 +160,23 @@ describe('routes', () => {
     expect(renderAt(path)).toBe(renderAt(canonical))
   })
 })
+
+describe('two middle names (chain page)', () => {
+  beforeEach(() => seed(fixture))
+  afterEach(resetStore)
+  it('lists second middle names, excluding those already in the chain', () => {
+    const html = mainHtml(renderAt('/boys/oliver/james'))
+    expect(html).toContain('<h2>Oliver James</h2>')
+    expect(html).toContain('Oliver James')
+    expect(html).toContain('Edward')
+    expect(html).not.toMatch(/<strong>James<\/strong>/)
+    expect(html).not.toMatch(/<strong>Oliver<\/strong>/)
+  })
+  it('first-level rows link to the chain page', () => {
+    expect(renderAt('/boys/oliver')).toContain('href="/boys/oliver/james"')
+  })
+  it('unknown middle is not found; unknown first falls back to name not found', () => {
+    expect(renderAt('/boys/oliver/nope')).toContain('Page not found')
+    expect(renderAt('/boys/nope/james')).toContain('Name not found')
+  })
+})

@@ -3,6 +3,7 @@ import { Link, Route, Switch, useLocation } from 'wouter'
 import LastNameModal from './components/LastNameModal'
 import { isCategory } from './lib/names'
 import { useNames } from './lib/store'
+import ChainPage from './pages/ChainPage'
 import CategoryList from './pages/CategoryList'
 import Home from './pages/Home'
 import NamePage from './pages/NamePage'
@@ -44,6 +45,12 @@ function App() {
       <main className="container">
         <Switch>
           <Route path="/" component={Home} />
+          <Route path="/:category/:slug/:middle">
+            {({ category, slug, middle }) => {
+              const c = category.toLowerCase()
+              return isCategory(c) ? <ChainPage category={c} slug={slug.toLowerCase()} middle={middle.toLowerCase()} /> : <NotFound />
+            }}
+          </Route>
           <Route path="/:category/:slug">
             {({ category, slug }) => {
               const c = category.toLowerCase()
